@@ -7,4 +7,4 @@ setup : install android studio
 
 implement login function
  - asjal : GUI
- - other : Login function, database connection, authorization, administrator approval
+ - others : Login function, database connection, authorization, administrator approval
