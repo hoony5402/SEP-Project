@@ -8,3 +8,5 @@ setup : install android studio
 implement login function
  - asjal : GUI
  - others : Login function, database connection, authorization, administrator approval
+ - reference links : https://youtu.be/sOJRJtM_iu0
+ - database : firebase
