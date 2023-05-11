@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -29,6 +30,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +43,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -55,10 +59,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sep.R
+import com.google.firebase.auth.FirebaseAuth
+
+private var auth: FirebaseAuth? = null
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPage(navController: NavHostController) {
+
+    auth = FirebaseAuth.getInstance()
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -75,8 +86,8 @@ fun RegisterPage(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val username = remember { mutableStateOf(TextFieldValue()) }
-        val password = remember { mutableStateOf(TextFieldValue()) }
+        var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -91,8 +102,8 @@ fun RegisterPage(navController: NavHostController) {
         //Name
         TextField(
             label = null,
-            value = username.value,
-            onValueChange = { username.value = it },
+            value = username,
+            onValueChange = { username = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -110,8 +121,8 @@ fun RegisterPage(navController: NavHostController) {
         //Student ID
         TextField(
             label = null,
-            value = username.value,
-            onValueChange = { username.value = it },
+            value = username,
+            onValueChange = { username = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -129,8 +140,8 @@ fun RegisterPage(navController: NavHostController) {
         //Username
         TextField(
             label = null,
-            value = username.value,
-            onValueChange = { username.value = it },
+            value = username,
+            onValueChange = { username = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -148,10 +159,10 @@ fun RegisterPage(navController: NavHostController) {
         //Password
         TextField(
             label = null,
-            value = password.value,
+            value = password,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password.value = it },
+            onValueChange = { password = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -164,15 +175,15 @@ fun RegisterPage(navController: NavHostController) {
             shape = RoundedCornerShape(20.dp)
         )
 
-        Spacer(modifier = Modifier.height(50.dp))
+        //Spacer(modifier = Modifier.height(50.dp))
 
         //Reenter Password
         TextField(
             label = null,
-            value = password.value,
+            value = password,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password.value = it },
+            onValueChange = { password = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -185,10 +196,19 @@ fun RegisterPage(navController: NavHostController) {
             shape = RoundedCornerShape(20.dp)
         )
 
-        Spacer(modifier = Modifier.height(70.dp))
+        //Spacer(modifier = Modifier.height(70.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
-                onClick = { },
+                onClick = {
+                          auth!!.createUserWithEmailAndPassword(username.toString(),password.toString())
+                              .addOnCompleteListener{task->
+                                  if(task.isSuccessful){
+                                      Toast.makeText(context,"Register Success",Toast.LENGTH_SHORT).show()
+                                  }else{
+                                      Toast.makeText(context,"Register Failed",Toast.LENGTH_SHORT).show()
+                                  }
+                              }
+                },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
