@@ -15,5 +15,9 @@ fun ScreenMain(){
         composable(Routes.Login.route) {
             LoginPage(navController = navController)
         }
+
+        composable(Routes.Register.route) {
+            RegisterPage(navController = navController)
+        }
     }
 }

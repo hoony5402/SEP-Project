@@ -46,6 +46,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.sep.screen.LoginPage
+import com.example.sep.screen.RegisterPage
 import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.reflect.typeOf
@@ -81,6 +82,10 @@ fun ScreenMain(){
 
         composable(Routes.Login.route) {
             LoginPage(navController = navController)
+        }
+
+        composable(Routes.Register.route) {
+            RegisterPage(navController = navController)
         }
     }
 }
