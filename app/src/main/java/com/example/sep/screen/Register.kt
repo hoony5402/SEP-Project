@@ -88,6 +88,7 @@ fun RegisterPage(navController: NavHostController) {
 
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
+        var password2 by remember { mutableStateOf("") }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -175,15 +176,15 @@ fun RegisterPage(navController: NavHostController) {
             shape = RoundedCornerShape(20.dp)
         )
 
-        //Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         //Reenter Password
         TextField(
             label = null,
-            value = password,
+            value = password2,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password = it },
+            onValueChange = { password2 = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -196,18 +197,27 @@ fun RegisterPage(navController: NavHostController) {
             shape = RoundedCornerShape(20.dp)
         )
 
-        //Spacer(modifier = Modifier.height(70.dp))
+        Spacer(modifier = Modifier.height(70.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
-                          auth!!.createUserWithEmailAndPassword(username.toString(),password.toString())
-                              .addOnCompleteListener{task->
-                                  if(task.isSuccessful){
-                                      Toast.makeText(context,"Register Success",Toast.LENGTH_SHORT).show()
-                                  }else{
-                                      Toast.makeText(context,"Register Failed",Toast.LENGTH_SHORT).show()
-                                  }
-                              }
+                    if (password != password2) {
+                        Toast.makeText(context, "Password is wrong", Toast.LENGTH_SHORT)
+                    } else {
+                        auth!!.createUserWithEmailAndPassword(
+                            username.toString(),
+                            password.toString()
+                        )
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
+                                        .show()
+                                } else {
+                                    Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            }
+                    }
                 },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
@@ -229,7 +239,8 @@ fun RegisterPage(navController: NavHostController) {
     {
         Spacer(modifier = Modifier.height(170.dp))
 
-        Text(text = "name",
+        Text(
+            text = "name",
             style = TextStyle(fontSize = 18.sp),
             color = colorResource(R.color.white),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -238,7 +249,8 @@ fun RegisterPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(75.dp))
 
-        Text(text = "student ID",
+        Text(
+            text = "student ID",
             style = TextStyle(fontSize = 18.sp),
             color = colorResource(R.color.white),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -247,7 +259,8 @@ fun RegisterPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(75.dp))
 
-        Text(text = "username",
+        Text(
+            text = "username",
             style = TextStyle(fontSize = 18.sp),
             color = colorResource(R.color.white),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -256,7 +269,8 @@ fun RegisterPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(75.dp))
 
-        Text(text = "password",
+        Text(
+            text = "password",
             style = TextStyle(fontSize = 18.sp),
             color = colorResource(R.color.white),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -265,7 +279,8 @@ fun RegisterPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height(75.dp))
 
-        Text(text = "re-enter password",
+        Text(
+            text = "re-enter password",
             style = TextStyle(fontSize = 18.sp),
             color = colorResource(R.color.white),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -273,3 +288,4 @@ fun RegisterPage(navController: NavHostController) {
         )
     }
 }
+
