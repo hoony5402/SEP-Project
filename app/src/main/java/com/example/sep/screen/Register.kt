@@ -202,7 +202,7 @@ fun RegisterPage(navController: NavHostController) {
             Button(
                 onClick = {
                     if (password != password2) {
-                        Toast.makeText(context, "Password is wrong", Toast.LENGTH_SHORT).show
+                        Toast.makeText(context, "Password is wrong", Toast.LENGTH_SHORT).show()
                     } else {
                         auth!!.createUserWithEmailAndPassword(
                             username.toString(),
