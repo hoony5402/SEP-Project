@@ -40,6 +40,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -62,10 +63,15 @@ import com.example.sep.Routes
 @Composable
 fun LoginPage(navController: NavHostController) {
 
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp
+    val screenWidth = configuration.screenWidthDp
+
     Box(
         modifier = Modifier
-            .padding(30.dp, 380.dp, 30.dp, 0.dp)
-            .size(width = 600.dp, height = 450.dp)
+            .padding(30.dp, (screenHeight/859.0 * 380).dp, 30.dp, 0.dp)
+            .size(width = (screenWidth/411.0 * 600).dp, height = (screenHeight/859.0 * 450).dp)
             .clip(shape = RoundedCornerShape(size = 50.dp))
             .background(color = colorResource(R.color.color5))
     ) {
@@ -80,34 +86,45 @@ fun LoginPage(navController: NavHostController) {
         val username = remember { mutableStateOf(TextFieldValue()) }
         val password = remember { mutableStateOf(TextFieldValue()) }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
         Image(
             painter = painterResource(id = R.drawable.gistagram),
-            contentDescription = null
+            contentDescription = null,
+            modifier = Modifier.size((screenHeight/859.0 * 190).dp)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
         Text(text = "Welcome to the GIST community!",
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
-            style = TextStyle(fontSize = 18.sp),
+            style = TextStyle(fontSize = (screenHeight/859.0 * 18).sp),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
         )
 
         Text(text = "Login or Register to get started",
             textAlign = TextAlign.Center,
             fontSize = 20.sp,
-            style = TextStyle(fontSize = 18.sp),
+            style = TextStyle(fontSize = (screenHeight/859.0 * 18).sp),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
         )
 
-        Spacer(modifier = Modifier.height(110.dp))
+        Spacer(modifier = Modifier.height((screenHeight/859.0 * 110).dp))
 
         TextField(
             label = null,
             value = username.value,
+            placeholder = {
+
+                Text(
+                    text = "username",
+                    fontSize = (screenHeight/859.0 * 18).sp,
+                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                    color = colorResource(R.color.white2)
+                )
+
+            },
             onValueChange = { username.value = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
@@ -117,14 +134,25 @@ fun LoginPage(navController: NavHostController) {
                 unfocusedIndicatorColor = colorResource(R.color.transparent),
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
-            textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))),
-            shape = RoundedCornerShape(20.dp)
+            textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 70).dp)
         )
 
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height((screenHeight/859.0 * 50).dp))
         TextField(
             label = null,
             value = password.value,
+            placeholder = {
+
+                Text(
+                    text = "password",
+                    fontSize = (screenHeight/859.0 * 18).sp,
+                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                    color = colorResource(R.color.white2)
+                )
+
+            },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             onValueChange = { password.value = it },
@@ -136,61 +164,41 @@ fun LoginPage(navController: NavHostController) {
                 unfocusedIndicatorColor = colorResource(R.color.transparent),
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
-            textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))),
-            shape = RoundedCornerShape(20.dp)
+            textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
+            shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 70).dp)
         )
 
-        Spacer(modifier = Modifier.height(60.dp))
-        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
+        Spacer(modifier = Modifier.height((screenHeight/859.0 * 60).dp))
+        Box(modifier = Modifier.padding((screenWidth/411.0 * 40).dp, 0.dp, (screenWidth/411.0 * 40).dp, 0.dp)) {
             Button(
                 onClick = { },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
-                    .width(300.dp)
-                    .height(50.dp)
+                    .width((screenWidth/411.0 * 300).dp)
+                    .height((screenHeight/859.0 * 50).dp)
             ) {
                 Text(
                     text = "login",
-                    fontSize = 18.sp,
+                    fontSize = (screenHeight/859.0 * 18).sp,
                     color = colorResource(R.color.white),
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
         ClickableText(
             text = AnnotatedString("not a user?"),
             onClick = {navController.navigate(Routes.Register.route)},
             style = TextStyle(
-                fontSize = 14.sp,
+                fontSize = (screenHeight/859.0 * 14).sp,
                 textDecoration = TextDecoration.Underline,
                 color = colorResource(R.color.white),
                 fontFamily = FontFamily(Font(R.font.sf_pro_text_semibold))
             )
-        )
-    }
-
-    Column()
-    {
-        Spacer(modifier = Modifier.height(400.dp))
-
-        Text(text = "username",
-            style = TextStyle(fontSize = 18.sp),
-            color = colorResource(R.color.white),
-            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-            modifier = Modifier.padding(horizontal = 80.dp)
-        )
-
-        Spacer(modifier = Modifier.height(75.dp))
-
-        Text(text = "password",
-            style = TextStyle(fontSize = 18.sp),
-            color = colorResource(R.color.white),
-            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-            modifier = Modifier.padding(horizontal = 80.dp)
         )
     }
 }
