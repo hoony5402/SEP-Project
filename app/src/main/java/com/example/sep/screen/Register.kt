@@ -68,8 +68,13 @@ fun RegisterPage(navController: NavHostController) {
 
     Box(
         modifier = Modifier
-            .padding((screenWidth/411.0 * 30).dp, (screenWidth/411.0 * 160).dp, (screenWidth/411.0 * 30).dp, 0.dp)
-            .size(width = (screenWidth/411.0 * 600).dp, height = (screenHeight/859.0 * 570).dp)
+            .padding(
+                (screenWidth / 411.0 * 30).dp,
+                (screenWidth / 411.0 * 160).dp,
+                (screenWidth / 411.0 * 30).dp,
+                0.dp
+            )
+            .size(width = (screenWidth / 411.0 * 600).dp, height = (screenHeight / 859.0 * 570).dp)
             .clip(shape = RoundedCornerShape(size = 50.dp))
             .background(color = colorResource(R.color.color5))
     ) {
@@ -81,34 +86,37 @@ fun RegisterPage(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val username = remember { mutableStateOf(TextFieldValue()) }
+        val name = remember { mutableStateOf(TextFieldValue()) }
+        val studentID = remember { mutableStateOf(TextFieldValue()) }
+        val email = remember { mutableStateOf(TextFieldValue()) }
         val password = remember { mutableStateOf(TextFieldValue()) }
+        val reenterpassword = remember { mutableStateOf(TextFieldValue()) }
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
         Image(
             painter = painterResource(id = R.drawable.gistagram),
             contentDescription = null,
-            modifier = Modifier.size((screenWidth/411.0 * 150).dp).align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .size((screenWidth / 411.0 * 150).dp)
+                .align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
         //Name
         TextField(
-            label = null,
-            value = username.value,
-            onValueChange = { username.value = it },
-            placeholder = {
-
+            label = {
                 Text(
                     text = "name",
                     fontSize = (screenHeight/859.0 * 16).sp,
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                     color = colorResource(R.color.white2)
                 )
-
             },
+            value = name.value,
+            onValueChange = { name.value = it },
+            placeholder = null,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -119,26 +127,26 @@ fun RegisterPage(navController: NavHostController) {
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
             shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 60).dp)
+            modifier = Modifier
+                .width((screenWidth / 411.0 * 280).dp)
+                .height((screenHeight / 859.0 * 60).dp)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 50).dp))
 
         //Student ID
         TextField(
-            label = null,
-            value = username.value,
-            onValueChange = { username.value = it },
-            placeholder = {
-
+            label = {
                 Text(
                     text = "student ID",
                     fontSize = (screenHeight/859.0 * 16).sp,
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                     color = colorResource(R.color.white2)
                 )
-
             },
+            value = studentID.value,
+            onValueChange = { studentID.value = it },
+            placeholder = null,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -149,26 +157,26 @@ fun RegisterPage(navController: NavHostController) {
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
             shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 60).dp)
+            modifier = Modifier
+                .width((screenWidth / 411.0 * 280).dp)
+                .height((screenHeight / 859.0 * 60).dp)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 50).dp))
 
-        //Username
+        //Email
         TextField(
-            label = null,
-            value = username.value,
-            onValueChange = { username.value = it },
-            placeholder = {
-
+            label = {
                 Text(
-                    text = "username",
-                    fontSize = (screenHeight/859.0 * 16).sp,
-                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                    color = colorResource(R.color.white2)
+                text = "email",
+                fontSize = (screenHeight/859.0 * 16).sp,
+                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                color = colorResource(R.color.white2)
                 )
-
             },
+            value = email.value,
+            onValueChange = { email.value = it },
+            placeholder = null,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -179,25 +187,25 @@ fun RegisterPage(navController: NavHostController) {
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
             shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 60).dp)
+            modifier = Modifier
+                .width((screenWidth / 411.0 * 280).dp)
+                .height((screenHeight / 859.0 * 60).dp)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 50).dp))
 
         //Password
         TextField(
-            label = null,
-            value = password.value,
-            placeholder = {
-
+            label = {
                 Text(
                     text = "password",
                     fontSize = (screenHeight/859.0 * 16).sp,
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                     color = colorResource(R.color.white2)
                 )
-
             },
+            value = password.value,
+            placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             onValueChange = { password.value = it },
@@ -211,28 +219,28 @@ fun RegisterPage(navController: NavHostController) {
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
             shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 60).dp)
+            modifier = Modifier
+                .width((screenWidth / 411.0 * 280).dp)
+                .height((screenHeight / 859.0 * 60).dp)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 50).dp))
 
         //Reenter Password
         TextField(
-            label = null,
-            value = password.value,
-            placeholder = {
-
+            label = {
                 Text(
                     text = "re-enter password",
                     fontSize = (screenHeight/859.0 * 16).sp,
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                     color = colorResource(R.color.white2)
                 )
-
             },
+            value = reenterpassword.value,
+            placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password.value = it },
+            onValueChange = { reenterpassword.value = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -243,7 +251,9 @@ fun RegisterPage(navController: NavHostController) {
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
             shape = RoundedCornerShape(20.dp),
-            modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 60).dp)
+            modifier = Modifier
+                .width((screenWidth / 411.0 * 280).dp)
+                .height((screenHeight / 859.0 * 60).dp)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 70).dp))
@@ -253,8 +263,8 @@ fun RegisterPage(navController: NavHostController) {
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
-                    .width((screenWidth/411.0 * 300).dp)
-                    .height((screenHeight/859.0 * 50).dp)
+                    .width((screenWidth / 411.0 * 300).dp)
+                    .height((screenHeight / 859.0 * 50).dp)
             ) {
                 Text(
                     text = "register",

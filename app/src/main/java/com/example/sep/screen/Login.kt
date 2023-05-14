@@ -98,14 +98,14 @@ fun LoginPage(navController: NavHostController) {
 
         Text(text = "Welcome to the GIST community!",
             textAlign = TextAlign.Center,
-            fontSize = 20.sp,
+            fontSize = (screenHeight/859.0 * 20).sp,
             style = TextStyle(fontSize = (screenHeight/859.0 * 18).sp),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
         )
 
         Text(text = "Login or Register to get started",
             textAlign = TextAlign.Center,
-            fontSize = 20.sp,
+            fontSize = (screenHeight/859.0 * 20).sp,
             style = TextStyle(fontSize = (screenHeight/859.0 * 18).sp),
             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
         )
@@ -113,18 +113,16 @@ fun LoginPage(navController: NavHostController) {
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 110).dp))
 
         TextField(
-            label = null,
-            value = username.value,
-            placeholder = {
-
+            label = {
                 Text(
-                    text = "username",
-                    fontSize = (screenHeight/859.0 * 18).sp,
+                    text = "email",
+                    fontSize = (screenHeight/859.0 * 16).sp,
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                     color = colorResource(R.color.white2)
                 )
-
             },
+            value = username.value,
+            placeholder = null,
             onValueChange = { username.value = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
@@ -141,18 +139,16 @@ fun LoginPage(navController: NavHostController) {
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 50).dp))
         TextField(
-            label = null,
-            value = password.value,
-            placeholder = {
-
+            label = {
                 Text(
                     text = "password",
-                    fontSize = (screenHeight/859.0 * 18).sp,
+                    fontSize = (screenHeight/859.0 * 16).sp,
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                     color = colorResource(R.color.white2)
                 )
-
             },
+            value = password.value,
+            placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             onValueChange = { password.value = it },

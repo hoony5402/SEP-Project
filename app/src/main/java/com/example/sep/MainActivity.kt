@@ -45,6 +45,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.ui.theme.SEPTheme
@@ -86,6 +87,10 @@ fun ScreenMain(){
 
         composable(Routes.Register.route) {
             RegisterPage(navController = navController)
+        }
+
+        composable(Routes.Homepage.route) {
+            HomepagePage(navController = navController)
         }
     }
 }
