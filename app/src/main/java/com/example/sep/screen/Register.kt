@@ -87,7 +87,7 @@ fun RegisterPage(navController: NavHostController) {
                 0.dp
             )
             .size(width = (screenWidth / 411.0 * 600).dp, height = (screenHeight / 859.0 * 570).dp)
-            .clip(shape = RoundedCornerShape(size = 50.dp))
+            .clip(shape = RoundedCornerShape(size = (screenHeight/859.0 * 50).dp))
             .background(color = colorResource(R.color.color5))
     ) {
     }
@@ -138,7 +138,7 @@ fun RegisterPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
@@ -168,7 +168,7 @@ fun RegisterPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
@@ -198,7 +198,7 @@ fun RegisterPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
@@ -230,7 +230,7 @@ fun RegisterPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
@@ -262,7 +262,7 @@ fun RegisterPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenWidth/411.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
@@ -291,7 +291,7 @@ fun RegisterPage(navController: NavHostController) {
                             }
                     }
                 },
-                shape = RoundedCornerShape(15.dp),
+                shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
                     .width((screenWidth / 411.0 * 300).dp)

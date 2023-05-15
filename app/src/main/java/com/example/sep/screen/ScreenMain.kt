@@ -23,5 +23,13 @@ fun ScreenMain(){
         composable(Routes.Homepage.route) {
             HomepagePage(navController = navController)
         }
+
+        composable(Routes.Map.route) {
+            MapPage(navController = navController)
+        }
+
+        composable(Routes.Calendar.route) {
+            CalendarPage(navController = navController)
+        }
     }
 }

@@ -83,7 +83,7 @@ fun LoginPage(navController: NavHostController) {
         modifier = Modifier
             .padding(30.dp, (screenHeight/859.0 * 380).dp, 30.dp, 0.dp)
             .size(width = (screenWidth/411.0 * 600).dp, height = (screenHeight/859.0 * 450).dp)
-            .clip(shape = RoundedCornerShape(size = 50.dp))
+            .clip(shape = RoundedCornerShape(size = (screenHeight/859.0 * 50).dp))
             .background(color = colorResource(R.color.color5))
     ) {
     }
@@ -145,7 +145,7 @@ fun LoginPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 70).dp)
         )
 
@@ -173,7 +173,7 @@ fun LoginPage(navController: NavHostController) {
                 disabledIndicatorColor = colorResource(R.color.transparent)
             ),
             textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-            shape = RoundedCornerShape(20.dp),
+            shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
             modifier = Modifier.width((screenWidth/411.0 * 280).dp).height((screenHeight/859.0 * 70).dp)
         )
 
@@ -192,7 +192,7 @@ fun LoginPage(navController: NavHostController) {
                                 }
                             }
                 },
-                shape = RoundedCornerShape(15.dp),
+                shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
                     .width((screenWidth/411.0 * 300).dp)

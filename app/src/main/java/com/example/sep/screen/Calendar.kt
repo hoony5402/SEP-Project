@@ -3,9 +3,7 @@ package com.example.sep.screen
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,7 +29,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -51,13 +48,9 @@ import com.example.sep.R
 import com.example.sep.Routes
 import kotlinx.coroutines.launch
 
-enum class BottomIcons {
-    HOME, CALENDAR, MAP
-}
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomepagePage(navController: NavHostController) {
+fun CalendarPage(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -68,18 +61,18 @@ fun HomepagePage(navController: NavHostController) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
-    val selected = remember { mutableStateOf(BottomIcons.HOME) }
+    val selected = remember { mutableStateOf(BottomIcons.CALENDAR) }
 
     Scaffold(
         containerColor = colorResource(R.color.white),
         topBar = {
-            TopAppBar(
+            CenterAlignedTopAppBar(
                 title = {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(0.dp, 0.dp, 10.dp, 0.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
-                    ){
+                    ) {
                         IconButton(onClick = {
                             Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
                                 .show()
@@ -98,23 +91,19 @@ fun HomepagePage(navController: NavHostController) {
                             modifier = Modifier
                                 .size((screenWidth / 411.0 * 175).dp),
 
-                        )
+                            )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors (
                     containerColor = colorResource(id = R.color.black30),
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
-                ),
-
+                )
             )
         },
         bottomBar = {
             BottomAppBar(
                 containerColor = colorResource(R.color.color1),
-                contentColor = colorResource(R.color.white2),
-                modifier = Modifier
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)),
+                modifier = Modifier.height(50.dp).clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)),
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -169,27 +158,9 @@ fun HomepagePage(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column (
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(colorResource(R.color.white))
+            modifier = Modifier.padding(paddingValues)
         ) {
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-            ) {
-                tabs.forEachIndexed { index, item ->
-                    Tab(
-                        selected = index == pagerState.currentPage,
-                        text = { Text(text = item.title) },
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
-                    )
-                }
-            }
-            HorizontalPager(
-                pageCount = tabs.size,
-                state = pagerState
-            ) {
-                tabs[pagerState.currentPage].screen()
-            }
+            Text("This is Calendar screen")
         }
     }
 }
