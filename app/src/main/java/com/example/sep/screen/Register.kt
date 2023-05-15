@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sep.R
+import com.example.sep.Routes
 import com.google.firebase.auth.FirebaseAuth
 
 private var auth: FirebaseAuth? = null
@@ -97,14 +98,11 @@ fun RegisterPage(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val name = remember { mutableStateOf(TextFieldValue()) }
-        val studentID = remember { mutableStateOf(TextFieldValue()) }
-        val email = remember { mutableStateOf(TextFieldValue()) }
-        val password = remember { mutableStateOf(TextFieldValue()) }
-        val reenterpassword = remember { mutableStateOf(TextFieldValue()) }
-        var username by remember { mutableStateOf("") }
+        var name by remember { mutableStateOf("") }
+        var studentID by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        var password2 by remember { mutableStateOf("") }
+        var reenterpassword by remember { mutableStateOf("") }
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
@@ -128,8 +126,8 @@ fun RegisterPage(navController: NavHostController) {
                     color = colorResource(R.color.white2)
                 )
             },
-            value = name.value,
-            onValueChange = { name.value = it },
+            value = name,
+            onValueChange = { name = it },
             placeholder = null,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
@@ -158,8 +156,8 @@ fun RegisterPage(navController: NavHostController) {
                     color = colorResource(R.color.white2)
                 )
             },
-            value = studentID.value,
-            onValueChange = { studentID.value = it },
+            value = studentID,
+            onValueChange = { studentID = it },
             placeholder = null,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
@@ -188,8 +186,8 @@ fun RegisterPage(navController: NavHostController) {
                 color = colorResource(R.color.white2)
                 )
             },
-            value = email.value,
-            onValueChange = { email.value = it },
+            value = email,
+            onValueChange = { email = it },
             placeholder = null,
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
@@ -218,7 +216,7 @@ fun RegisterPage(navController: NavHostController) {
                     color = colorResource(R.color.white2)
                 )
             },
-            value = password.value,
+            value = password,
             placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -250,12 +248,11 @@ fun RegisterPage(navController: NavHostController) {
                     color = colorResource(R.color.white2)
                 )
             },
-            value = reenterpassword.value,
+            value = reenterpassword,
             placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password2 = it },
-            onValueChange = { reenterpassword.value = it },
+            onValueChange = { reenterpassword = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -275,17 +272,18 @@ fun RegisterPage(navController: NavHostController) {
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
                 onClick = {
-                    if (password != password2) {
+                    if (password != reenterpassword) {
                         Toast.makeText(context, "Password is wrong", Toast.LENGTH_SHORT).show()
                     } else {
                         auth!!.createUserWithEmailAndPassword(
-                            username.toString(),
+                            email.toString(),
                             password.toString()
                         )
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                         .show()
+                                    navController.navigate(Routes.Login.route)
                                 } else {
                                     Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
                                         .show()

@@ -94,7 +94,7 @@ fun LoginPage(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        var username by remember { mutableStateOf("") }
+        var email by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
 
 
@@ -133,9 +133,9 @@ fun LoginPage(navController: NavHostController) {
                     color = colorResource(R.color.white2)
                 )
             },
-            value = username.value,
+            value = email,
             placeholder = null,
-            onValueChange = { username.value = it },
+            onValueChange = { email = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -159,7 +159,7 @@ fun LoginPage(navController: NavHostController) {
                     color = colorResource(R.color.white2)
                 )
             },
-            value = password.value,
+            value = password,
             placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -181,13 +181,14 @@ fun LoginPage(navController: NavHostController) {
         Box(modifier = Modifier.padding((screenWidth/411.0 * 40).dp, 0.dp, (screenWidth/411.0 * 40).dp, 0.dp)) {
             Button(
                 onClick = {
-                        auth.signInWithEmailAndPassword(username.toString(),password.toString())
+                        auth.signInWithEmailAndPassword(email.toString(),password.toString())
                             .addOnCompleteListener{task->
                                 if(task.isSuccessful){
                                     Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                                     user = auth.currentUser
+                                    navController.navigate(Routes.Homepage.route)
                                 }else{
-                                    Toast.makeText(context,"Login Failed"+username.toString(), Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
                                 }
                             }
                 },
