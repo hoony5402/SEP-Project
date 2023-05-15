@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -29,6 +30,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +44,7 @@ import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -58,6 +62,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.sep.R
 import com.example.sep.Routes
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +72,12 @@ fun LoginPage(navController: NavHostController) {
 
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
+
+    var auth = FirebaseAuth.getInstance()
+
+    var user = auth.currentUser
+
+    val context = LocalContext.current
 
     Box(
         modifier = Modifier
@@ -83,8 +94,9 @@ fun LoginPage(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        val username = remember { mutableStateOf(TextFieldValue()) }
-        val password = remember { mutableStateOf(TextFieldValue()) }
+        var username by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
@@ -151,7 +163,7 @@ fun LoginPage(navController: NavHostController) {
             placeholder = null,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password.value = it },
+            onValueChange = { password = it },
             colors = TextFieldDefaults.textFieldColors(
                 containerColor = colorResource(R.color.color6),
                 textColor = colorResource(R.color.white),
@@ -168,7 +180,17 @@ fun LoginPage(navController: NavHostController) {
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 60).dp))
         Box(modifier = Modifier.padding((screenWidth/411.0 * 40).dp, 0.dp, (screenWidth/411.0 * 40).dp, 0.dp)) {
             Button(
-                onClick = { },
+                onClick = {
+                        auth.signInWithEmailAndPassword(username.toString(),password.toString())
+                            .addOnCompleteListener{task->
+                                if(task.isSuccessful){
+                                    Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
+                                    user = auth.currentUser
+                                }else{
+                                    Toast.makeText(context,"Login Failed"+username.toString(), Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                },
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
