@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,16 +46,19 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.sep.screen.CalendarPage
 import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LoginPage
+import com.example.sep.screen.MapPage
+import com.example.sep.screen.MenuPage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
-import kotlin.reflect.typeOf
 
 private var auth: FirebaseAuth? = null
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -91,6 +95,18 @@ fun ScreenMain(){
 
         composable(Routes.Homepage.route) {
             HomepagePage(navController = navController)
+        }
+
+        composable(Routes.Map.route) {
+            MapPage(navController = navController)
+        }
+
+        composable(Routes.Calendar.route) {
+            CalendarPage(navController = navController)
+        }
+
+        composable(Routes.Menu.route) {
+            MenuPage(navController = navController)
         }
     }
 }
