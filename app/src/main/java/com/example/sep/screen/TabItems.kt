@@ -8,14 +8,26 @@ import androidx.compose.material.icons.filled.Place
 val tabs = listOf(
     TabItem(
         title = "Information",
-        screen = { TabScreen(content = "Information") }
+        screen = {
+            TabScreen(
+                content = CardObject()
+            )
+        }
     ),
     TabItem(
         title = "Announcements",
-        screen = { TabScreen(content = "Announcements")}
+        screen = {
+            TabScreen(
+                content = CardObject()
+            )
+        }
     ),
     TabItem(
         title = "Events",
-        screen = { TabScreen(content = "Events")}
+        screen = {
+            TabScreen(
+                content = CardObject()
+            )
+        }
     )
 )
