@@ -29,6 +29,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -66,22 +67,28 @@ fun MapPage(navController: NavHostController) {
     Scaffold(
         containerColor = colorResource(R.color.white),
         topBar = {
-            CenterAlignedTopAppBar(
+            TopAppBar(
                 title = {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(0.dp, 0.dp, 10.dp, 0.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 0.dp, (screenHeight / 859.0 * 10).dp, 0.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        IconButton(onClick = {
-                            Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                        }) {
+                        IconButton(
+                            onClick = {
+                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Menu.route)
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.menu)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(35.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 35).dp),
                                 tint = colorResource(R.color.black)
                             )
                         }
@@ -89,7 +96,7 @@ fun MapPage(navController: NavHostController) {
                             painter = painterResource(id = R.drawable.gistagram2),
                             contentDescription = null,
                             modifier = Modifier
-                                .size((screenWidth / 411.0 * 175).dp),
+                                .size((screenHeight / 859.0 * 175).dp),
 
                             )
                     }
@@ -97,58 +104,72 @@ fun MapPage(navController: NavHostController) {
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors (
                     containerColor = colorResource(id = R.color.black30),
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                ),
+                modifier = Modifier.height(50.dp)
+
             )
         },
         bottomBar = {
             BottomAppBar(
                 containerColor = colorResource(R.color.color1),
-                modifier = Modifier.height(50.dp).clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)),
+                contentColor = colorResource(R.color.white2),
+                modifier = Modifier
+                    .height((screenHeight / 859.0 * 50).dp)
+                    .clip(RoundedCornerShape((screenHeight / 859.0 * 20).dp, (screenHeight / 859.0 * 20).dp, 0.dp, 0.dp)),
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = {
-                            selected.value = BottomIcons.CALENDAR
-                            Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Calendar.route)
-                        }) {
+                        IconButton(
+                            onClick = {
+                                selected.value = BottomIcons.CALENDAR
+                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Calendar.route)
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.calendar)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
                                 tint = if (selected.value == BottomIcons.CALENDAR) colorResource(R.color.black) else colorResource(R.color.black50)
                             )
                         }
-                        IconButton(onClick = {
-                            selected.value = BottomIcons.HOME
-                            Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Homepage.route)
-                        }) {
+                        IconButton(
+                            onClick = {
+                                selected.value = BottomIcons.HOME
+                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Homepage.route)
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.hut)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
                                 tint = if (selected.value == BottomIcons.HOME) colorResource(R.color.black) else colorResource(R.color.black50)
                             )
                         }
-                        IconButton(onClick = {
-                            selected.value = BottomIcons.MAP
-                            Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Map.route)
-                        }) {
+                        IconButton(
+                            onClick = {
+                                selected.value = BottomIcons.MAP
+                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Map.route)
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.place)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
                                 tint = if (selected.value == BottomIcons.MAP) colorResource(R.color.black) else colorResource(R.color.black50)
                             )
                         }

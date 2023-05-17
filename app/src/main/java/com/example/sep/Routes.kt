@@ -6,5 +6,7 @@ sealed class Routes(val route: String) {
     object Homepage : Routes("Homepage")
     object Map : Routes("Map")
     object Calendar : Routes("Calendar")
+    object Menu : Routes("Menu")
+
 
 }

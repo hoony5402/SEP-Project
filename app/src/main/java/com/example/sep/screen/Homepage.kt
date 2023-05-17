@@ -6,12 +6,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Arrangement.Absolute.Center
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,10 +48,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sep.R
 import com.example.sep.Routes
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
 enum class BottomIcons {
@@ -58,6 +67,9 @@ enum class BottomIcons {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomepagePage(navController: NavHostController) {
+
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(colorResource(R.color.black30))
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -76,19 +88,25 @@ fun HomepagePage(navController: NavHostController) {
             TopAppBar(
                 title = {
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(0.dp, 0.dp, 10.dp, 0.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 0.dp, (screenHeight / 859.0 * 10).dp, 0.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        IconButton(onClick = {
+                        IconButton(
+                            onClick = {
                             Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
                                 .show()
-                        }) {
+                            navController.navigate(Routes.Menu.route)
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.menu)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(35.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 35).dp),
                                 tint = colorResource(R.color.black)
                             )
                         }
@@ -96,7 +114,7 @@ fun HomepagePage(navController: NavHostController) {
                             painter = painterResource(id = R.drawable.gistagram2),
                             contentDescription = null,
                             modifier = Modifier
-                                .size((screenWidth / 411.0 * 175).dp),
+                                .size((screenHeight / 859.0 * 175).dp),
 
                         )
                     }
@@ -105,6 +123,7 @@ fun HomepagePage(navController: NavHostController) {
                     containerColor = colorResource(id = R.color.black30),
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 ),
+                modifier = Modifier.height(50.dp)
 
             )
         },
@@ -113,53 +132,62 @@ fun HomepagePage(navController: NavHostController) {
                 containerColor = colorResource(R.color.color1),
                 contentColor = colorResource(R.color.white2),
                 modifier = Modifier
-                    .height(50.dp)
-                    .clip(RoundedCornerShape(20.dp, 20.dp, 0.dp, 0.dp)),
+                    .height((screenHeight / 859.0 * 50).dp)
+                    .clip(RoundedCornerShape((screenHeight / 859.0 * 20).dp, (screenHeight / 859.0 * 20).dp, 0.dp, 0.dp)),
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = {
+                        IconButton(
+                            onClick = {
                             selected.value = BottomIcons.CALENDAR
                             Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
                                 .show()
                             navController.navigate(Routes.Calendar.route)
-                        }) {
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.calendar)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
                                 tint = if (selected.value == BottomIcons.CALENDAR) colorResource(R.color.black) else colorResource(R.color.black50)
                             )
                         }
-                        IconButton(onClick = {
+                        IconButton(
+                            onClick = {
                             selected.value = BottomIcons.HOME
                             Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
                                 .show()
                             navController.navigate(Routes.Homepage.route)
-                        }) {
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.hut)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
                                 tint = if (selected.value == BottomIcons.HOME) colorResource(R.color.black) else colorResource(R.color.black50)
                             )
                         }
-                        IconButton(onClick = {
+                        IconButton(
+                            onClick = {
                             selected.value = BottomIcons.MAP
                             Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
                                 .show()
                             navController.navigate(Routes.Map.route)
-                        }) {
+                            },
+                            modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                        ) {
                             val delete = painterResource(id = R.drawable.place)
                             Icon(
                                 painter = delete,
                                 contentDescription = null,
-                                modifier = Modifier.size(100.dp),
+                                modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
                                 tint = if (selected.value == BottomIcons.MAP) colorResource(R.color.black) else colorResource(R.color.black50)
                             )
                         }
@@ -175,12 +203,30 @@ fun HomepagePage(navController: NavHostController) {
         ) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
+                containerColor = colorResource(R.color.transparent),
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        modifier = Modifier
+                            .tabIndicatorOffset(currentTabPosition = tabPositions[pagerState.currentPage])
+                            .padding(horizontal = (screenHeight / 859.0 * 40).dp)
+                            .clip(RoundedCornerShape((screenHeight / 859.0 * 10).dp)),
+                        color = colorResource(R.color.color1),
+                        height = 5.dp
+                    )
+                },
+                divider = {}
             ) {
                 tabs.forEachIndexed { index, item ->
                     Tab(
                         selected = index == pagerState.currentPage,
-                        text = { Text(text = item.title) },
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } },
+                        selectedContentColor = colorResource(R.color.color1),
+                        unselectedContentColor = colorResource(R.color.black50),
+                        text = { Text(text = item.title,
+                            style = TextStyle(fontSize = (screenHeight/859.0 * 13).sp),
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.color1)
+                        ) },
+                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
                     )
                 }
             }

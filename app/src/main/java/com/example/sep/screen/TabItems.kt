@@ -7,15 +7,15 @@ import androidx.compose.material.icons.filled.Place
 
 val tabs = listOf(
     TabItem(
-        title = "Account",
-        screen = { TabScreen(content = "Account Page") }
+        title = "Information",
+        screen = { TabScreen(content = "Information") }
     ),
     TabItem(
-        title = "Favorite",
-        screen = { TabScreen(content = "Favorite list")}
+        title = "Announcements",
+        screen = { TabScreen(content = "Announcements")}
     ),
     TabItem(
-        title = "Place",
-        screen = { TabScreen(content = "Places")}
+        title = "Events",
+        screen = { TabScreen(content = "Events")}
     )
 )

@@ -50,6 +50,7 @@ import com.example.sep.screen.CalendarPage
 import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
+import com.example.sep.screen.MenuPage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -102,6 +103,10 @@ fun ScreenMain(){
 
         composable(Routes.Calendar.route) {
             CalendarPage(navController = navController)
+        }
+
+        composable(Routes.Menu.route) {
+            MenuPage(navController = navController)
         }
     }
 }
