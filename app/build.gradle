@@ -73,4 +73,12 @@ dependencies {
 
     //Navigation
     implementation "androidx.navigation:navigation-compose:2.4.0-alpha04"
+
+    implementation 'androidx.compose.foundation:foundation:1.4.0-rc01'
+
+    //Status Bar colour
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.27.0"
+
+    //Splash screen
+    implementation 'androidx.core:core-splashscreen:1.0.0-alpha02'
 }

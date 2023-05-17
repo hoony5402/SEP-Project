@@ -3,17 +3,13 @@ package com.example.sep.screen
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.Absolute.Center
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -48,28 +43,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.sep.R
 import com.example.sep.Routes
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
-
-enum class BottomIcons {
-    HOME, CALENDAR, MAP
-}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomepagePage(navController: NavHostController) {
-
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(colorResource(R.color.black30))
+fun MapPage(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -80,7 +62,7 @@ fun HomepagePage(navController: NavHostController) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
 
-    val selected = remember { mutableStateOf(BottomIcons.HOME) }
+    val selected = remember { mutableStateOf(BottomIcons.MAP) }
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -96,9 +78,9 @@ fun HomepagePage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                            Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Menu.route)
+                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -116,7 +98,7 @@ fun HomepagePage(navController: NavHostController) {
                             modifier = Modifier
                                 .size((screenHeight / 859.0 * 175).dp),
 
-                        )
+                            )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors (
@@ -142,10 +124,10 @@ fun HomepagePage(navController: NavHostController) {
                     ) {
                         IconButton(
                             onClick = {
-                            selected.value = BottomIcons.CALENDAR
-                            Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Calendar.route)
+                                selected.value = BottomIcons.CALENDAR
+                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -159,10 +141,10 @@ fun HomepagePage(navController: NavHostController) {
                         }
                         IconButton(
                             onClick = {
-                            selected.value = BottomIcons.HOME
-                            Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Homepage.route)
+                                selected.value = BottomIcons.HOME
+                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -176,10 +158,10 @@ fun HomepagePage(navController: NavHostController) {
                         }
                         IconButton(
                             onClick = {
-                            selected.value = BottomIcons.MAP
-                            Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Map.route)
+                                selected.value = BottomIcons.MAP
+                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -197,45 +179,9 @@ fun HomepagePage(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column (
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(colorResource(R.color.white))
+            modifier = Modifier.padding(paddingValues)
         ) {
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-                containerColor = colorResource(R.color.transparent),
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(currentTabPosition = tabPositions[pagerState.currentPage])
-                            .padding(horizontal = (screenHeight / 859.0 * 40).dp)
-                            .clip(RoundedCornerShape((screenHeight / 859.0 * 10).dp)),
-                        color = colorResource(R.color.color1),
-                        height = 5.dp
-                    )
-                },
-                divider = {}
-            ) {
-                tabs.forEachIndexed { index, item ->
-                    Tab(
-                        selected = index == pagerState.currentPage,
-                        selectedContentColor = colorResource(R.color.color1),
-                        unselectedContentColor = colorResource(R.color.black50),
-                        text = { Text(text = item.title,
-                            style = TextStyle(fontSize = (screenHeight/859.0 * 13).sp),
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                            color = colorResource(R.color.color1)
-                        ) },
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
-                    )
-                }
-            }
-            HorizontalPager(
-                pageCount = tabs.size,
-                state = pagerState
-            ) {
-                tabs[pagerState.currentPage].screen()
-            }
+            Text("This is Maps screen")
         }
     }
 }
