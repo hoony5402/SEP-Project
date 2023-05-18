@@ -2,10 +2,13 @@
 
 package com.example.sep
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -56,11 +59,12 @@ import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
 
 private var auth: FirebaseAuth? = null
-
+private var context: Context? = null
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        context = this
         setContent {
             SEPTheme {
 
@@ -79,9 +83,38 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("Range")
 @Composable
 fun ScreenMain(){
     val navController = rememberNavController()
+
+    //AutoLogin
+    var auth = FirebaseAuth.getInstance()
+
+    var dbHelper = DBHelper(context,"login.db",null,1)
+    var database = dbHelper.writableDatabase
+    var cursor = database.rawQuery("SELECT * FROM login;",null)
+    var email = ""
+    var password = ""
+    while(cursor.moveToNext()) {
+        email = cursor.getString(cursor.getColumnIndex("email"))
+        cursor.moveToNext()
+        password = cursor.getString(cursor.getColumnIndex("password"))
+    }
+
+    if(email != "" && password != ""){
+        Toast.makeText(context,"Login Now...", Toast.LENGTH_SHORT).show()
+        //TODO: from auth to user
+        auth.signInWithEmailAndPassword(email.toString(),password.toString())
+            .addOnCompleteListener{task->
+                if(task.isSuccessful){
+                    Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
+                    navController.navigate(Routes.Homepage.route)
+                }else{
+                    Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
+                }
+            }
+    }
 
     NavHost(navController = navController, startDestination = Routes.Login.route) {
 

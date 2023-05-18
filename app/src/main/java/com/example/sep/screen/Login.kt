@@ -52,6 +52,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -217,6 +218,12 @@ fun LoginPage(navController: NavHostController) {
                         if(task.isSuccessful){
                             Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                             user = auth.currentUser
+                            //Add to DB
+                            var dbHelper = DBHelper(context,"login.db",null,1)
+                            var database = dbHelper.writableDatabase
+                            database.execSQL("INSERT OR REPLACE INTO login('email') values('${email.toString()}')")
+                            database.execSQL("INSERT OR REPLACE INTO login('password') values('${password.toString()}')")
+                            //
                             navController.navigate(Routes.Homepage.route)
                         }else{
                             Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
