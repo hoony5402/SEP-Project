@@ -56,12 +56,7 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import com.example.sep.MainActivity
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -79,26 +74,9 @@ fun LoginPage(navController: NavHostController) {
 
     var user = auth.currentUser
 
-    val db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    val ref :DatabaseReference = db.getReference("users")
-
     val context = LocalContext.current
 
     val focusManager = LocalFocusManager.current
-    /*
-    var wow :String = "bb"
-    var db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref :DatabaseReference = db.getReference("users")
-    ref.child(wow).setValue("yes")
-*/
-    if(user!=null){
-        //login_success(user.email.toString())
-        Toast.makeText(context,user.email+" login success", Toast.LENGTH_SHORT).show()
-        navController.navigate(Routes.Homepage.route)
-    }
-    else{
-        MainActivity.userdata.reset()
-    }
 
     Box(
         modifier = Modifier
@@ -172,7 +150,7 @@ fun LoginPage(navController: NavHostController) {
                 .height((screenHeight / 859.0 * 70).dp)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
@@ -216,10 +194,9 @@ fun LoginPage(navController: NavHostController) {
             keyboardActions = KeyboardActions(
                 onGo = {
                     focusManager.moveFocus(FocusDirection.Enter)
-                    auth?.signInWithEmailAndPassword(email.toString(),password.toString())
-                        ?.addOnCompleteListener{task->
+                    auth.signInWithEmailAndPassword(email.toString(),password.toString())
+                        .addOnCompleteListener{task->
                             if(task.isSuccessful){
-                                login_success(email)
                                 Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                                 user = auth.currentUser
                                 navController.navigate(Routes.Homepage.route)
@@ -235,10 +212,9 @@ fun LoginPage(navController: NavHostController) {
 
         Button(
             onClick = {
-                auth?.signInWithEmailAndPassword(email.toString(),password.toString())
-                    ?.addOnCompleteListener{task->
+                auth.signInWithEmailAndPassword(email.toString(),password.toString())
+                    .addOnCompleteListener{task->
                         if(task.isSuccessful){
-                            login_success(email)
                             Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                             user = auth.currentUser
                             navController.navigate(Routes.Homepage.route)
@@ -274,8 +250,4 @@ fun LoginPage(navController: NavHostController) {
             )
         )
     }
-}
-
-fun login_success(email:String){
-
 }

@@ -7,7 +7,6 @@ sealed class Routes(val route: String) {
     object Map : Routes("Map")
     object Calendar : Routes("Calendar")
     object Menu : Routes("Menu")
-    object WritePost : Routes("WritePost")
 
 
 }

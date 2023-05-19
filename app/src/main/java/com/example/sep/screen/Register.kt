@@ -73,13 +73,8 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import java.time.temporal.ValueRange
-import com.example.sep.MainActivity
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ktx.values
 
-//private var auth: FirebaseAuth? = null
+private var auth: FirebaseAuth? = null
 
 @SuppressLint("HalfFloat")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -94,8 +89,7 @@ fun RegisterPage(navController: NavHostController) {
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
 
-    //auth = FirebaseAuth.getInstance()
-    var auth = FirebaseAuth.getInstance()
+    auth = FirebaseAuth.getInstance()
 
     val context = LocalContext.current
 
@@ -133,7 +127,7 @@ fun RegisterPage(navController: NavHostController) {
             contentDescription = null,
             modifier = Modifier
                 .size((screenHeight/859.0 * 150).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
         )
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
@@ -164,7 +158,7 @@ fun RegisterPage(navController: NavHostController) {
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text,
@@ -203,7 +197,7 @@ fun RegisterPage(navController: NavHostController) {
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
@@ -242,7 +236,7 @@ fun RegisterPage(navController: NavHostController) {
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Email,
@@ -282,7 +276,7 @@ fun RegisterPage(navController: NavHostController) {
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
@@ -322,7 +316,7 @@ fun RegisterPage(navController: NavHostController) {
             modifier = Modifier
                 .width((screenWidth / 411.0 * 280).dp)
                 .height((screenHeight / 859.0 * 60).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Password,
@@ -337,10 +331,8 @@ fun RegisterPage(navController: NavHostController) {
                     )
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                register_success(name,studentID,email,password);
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
-                                auth.signOut()
                                 navController.navigate(Routes.Login.route)
                             } else {
                                 Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
@@ -364,10 +356,8 @@ fun RegisterPage(navController: NavHostController) {
                     )
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                register_success(name,studentID,email,password)
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
-                                auth.signOut()
                                 navController.navigate(Routes.Login.route)
                             } else {
                                 Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
@@ -381,7 +371,7 @@ fun RegisterPage(navController: NavHostController) {
             modifier = Modifier
                 .width((screenWidth / 411.0 * 300).dp)
                 .height((screenHeight / 859.0 * 50).dp)
-                .align(CenterHorizontally)
+                .align(Alignment.CenterHorizontally)
         ) {
             Text(
                 text = "register",
@@ -391,15 +381,5 @@ fun RegisterPage(navController: NavHostController) {
             )
         }
     }
-}
-
-fun register_success(name: String,student: String,email: String,password: String) {
-    var db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref :DatabaseReference = db.getReference("users")
-    ref.child(name).child("email").setValue(email)
-    ref.child(name).child("name").setValue(name)
-    ref.child(name).child("studentid").setValue(student)
-    ref.child(name).child("password").setValue(password)
-
 }
 

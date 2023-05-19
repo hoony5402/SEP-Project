@@ -52,9 +52,10 @@ import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
 import com.example.sep.screen.MenuPage
 import com.example.sep.screen.RegisterPage
-import com.example.sep.screen.WritePost
 import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
+
+private var auth: FirebaseAuth? = null
 
 class MainActivity : ComponentActivity() {
 
@@ -63,6 +64,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SEPTheme {
 
+                auth = FirebaseAuth.getInstance()
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -74,10 +76,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    companion object {
-        var userdata :UserData = UserData();
     }
 }
 
@@ -109,10 +107,6 @@ fun ScreenMain(){
 
         composable(Routes.Menu.route) {
             MenuPage(navController = navController)
-        }
-
-        composable(Routes.WritePost.route) {
-            WritePost(navController = navController)
         }
     }
 }
