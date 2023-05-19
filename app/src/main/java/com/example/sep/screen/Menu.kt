@@ -15,7 +15,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,11 +44,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -122,28 +119,6 @@ fun MenuPage(navController: NavHostController) {
             modifier = Modifier.padding(paddingValues)
         ) {
             Text("This is Menu screen")
-            Text(MainActivity.userdata.useremail)
-            Button(onClick = {
-                FirebaseAuth.getInstance().signOut()
-                navController.navigate(Routes.Login.route)
-            }) {
-                Text(
-                    text = "logout",
-                    fontSize = (screenHeight/859.0 * 18).sp,
-                    color = colorResource(R.color.white),
-                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-                )
-            }
-            Button(onClick = {
-                navController.navigate(Routes.WritePost.route)
-            }) {
-                Text(
-                    text = "Write Post",
-                    fontSize = (screenHeight/859.0 * 18).sp,
-                    color = colorResource(R.color.white),
-                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-                )
-            }
         }
     }
 }
