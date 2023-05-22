@@ -52,6 +52,7 @@ import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
 import com.example.sep.screen.MenuPage
 import com.example.sep.screen.RegisterPage
+import com.example.sep.screen.WritePost
 import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
 
@@ -83,7 +84,7 @@ class MainActivity : ComponentActivity() {
 fun ScreenMain(){
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Routes.Login.route) {
+    NavHost(navController = navController, startDestination = Routes.WritePost.route) {
 
         composable(Routes.Login.route) {
             LoginPage(navController = navController)
@@ -107,6 +108,10 @@ fun ScreenMain(){
 
         composable(Routes.Menu.route) {
             MenuPage(navController = navController)
+        }
+
+        composable(Routes.WritePost.route) {
+            WritePost(navController = navController)
         }
     }
 }

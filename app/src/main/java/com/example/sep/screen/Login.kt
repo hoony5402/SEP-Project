@@ -1,5 +1,7 @@
 package com.example.sep.screen
 
+import android.content.ContentValues
+import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -56,6 +58,7 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)

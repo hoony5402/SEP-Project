@@ -1,7 +1,9 @@
 package com.example.sep.screen
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.util.Half.toFloat
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -73,6 +75,7 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 
 private var auth: FirebaseAuth? = null
 
@@ -331,6 +334,18 @@ fun RegisterPage(navController: NavHostController) {
                     )
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                var user = auth!!.currentUser
+                                val profileUpdates = userProfileChangeRequest {
+                                    displayName = name
+                                }
+                                user!!.updateProfile(profileUpdates)
+                                    .addOnCompleteListener{ task ->
+                                        if (task.isSuccessful)
+                                        {
+                                            Log.d(TAG, "User profile updated.")
+                                        }
+                                    }
+
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.navigate(Routes.Login.route)
@@ -356,6 +371,17 @@ fun RegisterPage(navController: NavHostController) {
                     )
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                var user = auth!!.currentUser
+                                val profileUpdates = userProfileChangeRequest {
+                                    displayName = name
+                                }
+                                user!!.updateProfile(profileUpdates)
+                                    .addOnCompleteListener{ task ->
+                                        if (task.isSuccessful)
+                                        {
+                                            Log.d(TAG, "User profile updated.")
+                                        }
+                                    }
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.navigate(Routes.Login.route)
