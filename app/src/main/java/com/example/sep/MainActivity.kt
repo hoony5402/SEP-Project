@@ -5,6 +5,7 @@ package com.example.sep
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.os.Debug
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -46,6 +47,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -65,6 +68,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         context = this
+
+
         setContent {
             SEPTheme {
 
@@ -86,37 +91,14 @@ class MainActivity : ComponentActivity() {
 @SuppressLint("Range")
 @Composable
 fun ScreenMain(){
-    val navController = rememberNavController()
+    var navController = rememberNavController()
+    var startDest = Routes.Login.route
 
-    //AutoLogin
-    var auth = FirebaseAuth.getInstance()
-
-    var dbHelper = DBHelper(context,"login.db",null,1)
-    var database = dbHelper.writableDatabase
-    var cursor = database.rawQuery("SELECT * FROM login;",null)
-    var email = ""
-    var password = ""
-    while(cursor.moveToNext()) {
-        email = cursor.getString(cursor.getColumnIndex("email"))
-        cursor.moveToNext()
-        password = cursor.getString(cursor.getColumnIndex("password"))
+    if (auth?.currentUser != null) {
+        startDest = Routes.Homepage.route
     }
 
-    if(email != "" && password != ""){
-        Toast.makeText(context,"Login Now...", Toast.LENGTH_SHORT).show()
-        //TODO: from auth to user
-        auth.signInWithEmailAndPassword(email.toString(),password.toString())
-            .addOnCompleteListener{task->
-                if(task.isSuccessful){
-                    Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
-                    navController.navigate(Routes.Homepage.route)
-                }else{
-                    Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
-                }
-            }
-    }
-
-    NavHost(navController = navController, startDestination = Routes.Login.route) {
+    NavHost(navController = navController, startDestination = startDest) {
 
         composable(Routes.Login.route) {
             LoginPage(navController = navController)

@@ -1,6 +1,5 @@
 package com.example.sep.screen
 
-import android.view.Window
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +33,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -52,7 +50,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -218,12 +215,6 @@ fun LoginPage(navController: NavHostController) {
                         if(task.isSuccessful){
                             Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                             user = auth.currentUser
-                            //Add to DB
-                            var dbHelper = DBHelper(context,"login.db",null,1)
-                            var database = dbHelper.writableDatabase
-                            database.execSQL("INSERT OR REPLACE INTO login('email') values('${email.toString()}')")
-                            database.execSQL("INSERT OR REPLACE INTO login('password') values('${password.toString()}')")
-                            //
                             navController.navigate(Routes.Homepage.route)
                         }else{
                             Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
