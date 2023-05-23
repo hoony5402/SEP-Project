@@ -327,13 +327,13 @@ fun WritePost(navController: NavHostController) {
             modifier = Modifier
                 .padding(
                     (screenHeight / 859.0 * 30).dp,
-                    (screenHeight / 859.0 * 90).dp,
+                    (screenHeight / 859.0 * 100).dp,
                     (screenHeight / 859.0 * 30).dp,
                     0.dp
                 )
                 .size(
                     width = (screenWidth / 411.0 * 600).dp,
-                    height = (screenHeight / 859.0 * 600).dp
+                    height = (screenHeight / 859.0 * 580).dp
                 )
                 .clip(shape = RoundedCornerShape(size = (screenHeight / 859.0 * 50).dp))
                 .background(color = colorResource(R.color.color5))
@@ -347,7 +347,93 @@ fun WritePost(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 60).dp))
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 80).dp))
+
+            val listItems = arrayOf("Information", "Announcements", "Events")
+
+            val contextForToast = LocalContext.current.applicationContext
+
+            // state of the menu
+            var expanded by remember {
+                mutableStateOf(false)
+            }
+
+            // remember the selected item
+            var selectedItem by remember {
+                mutableStateOf(listItems[0])
+            }
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = {
+                    expanded = !expanded
+                }
+            ) {
+                // text field
+                TextField(
+                    value = selectedItem,
+                    onValueChange = {selectedItem},
+                    readOnly = true,
+                    label = {
+                        Text(
+                            text = "type",
+                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2)
+                        )
+                    },
+                    placeholder = null,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = expanded
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = colorResource(R.color.color6),
+                        textColor = colorResource(R.color.white),
+                        cursorColor = colorResource(R.color.white),
+                        focusedIndicatorColor = colorResource(R.color.transparent),
+                        unfocusedIndicatorColor = colorResource(R.color.transparent),
+                        disabledIndicatorColor = colorResource(R.color.transparent)
+                    ),
+                    textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 280).dp)
+                        .height((screenHeight / 859.0 * 60).dp)
+                        .align(Alignment.CenterHorizontally)
+                        .imePadding()
+                        .menuAnchor()
+                )
+
+                // menu
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    // this is a column scope
+                    // all the items are added vertically
+                    listItems.forEach { selectedOption ->
+                        // menu item
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = selectedOption,
+                                    fontSize = (screenHeight/859.0 * 12).sp,
+                                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                                    color = colorResource(R.color.white2)
+                                )},
+                            onClick = {
+                                selectedItem = selectedOption
+                                Toast.makeText(contextForToast, selectedOption, Toast.LENGTH_SHORT).show()
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
             TextField(
                 label = null,
@@ -385,7 +471,7 @@ fun WritePost(navController: NavHostController) {
                 )
             )
 
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
             TextField(
                 label = null,
@@ -411,7 +497,7 @@ fun WritePost(navController: NavHostController) {
                 shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
                 modifier = Modifier
                     .width((screenWidth / 411.0 * 280).dp)
-                    .height((screenHeight / 859.0 * 60).dp)
+                    .height((screenHeight / 859.0 * 160).dp)
                     .align(Alignment.CenterHorizontally)
                     .imePadding(),
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -423,157 +509,98 @@ fun WritePost(navController: NavHostController) {
                 )
             )
 
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
-            Button(
-                shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 280).dp)
-                    .height((screenHeight / 859.0 * 60).dp)
-                    .align(Alignment.CenterHorizontally)
-                    .imePadding(),
-                onClick = {mDatePickerDialog.show()},
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
-            ) {
-
-                if (mDate.value == "")
-                {
-                    Text(
-                        text = "date",
-                        fontSize = (screenHeight/859.0 * 16).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white2),
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                else
-                {
-                    Text(
-                        text = "${mDate.value}",
-                        fontSize = (screenHeight/859.0 * 18).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white),
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-
-            Button(
-                shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 280).dp)
-                    .height((screenHeight / 859.0 * 60).dp)
-                    .align(Alignment.CenterHorizontally)
-                    .imePadding(),
-                onClick = {mTimePickerDialog.show()},
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
-            ) {
-
-                if (mTime.value == "")
-                {
-                    Text(
-                        text = "time",
-                        fontSize = (screenHeight/859.0 * 16).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white2),
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-                else
-                {
-                    Text(
-                        text = "${mTime.value}",
-                        fontSize = (screenHeight/859.0 * 18).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white),
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-
-            TextField(
-                label = null,
-                value = location,
-                onValueChange = { location = it },
-                placeholder = {
-                    Text(
-                        text = "location",
-                        fontSize = (screenHeight/859.0 * 16).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white2)
-                    )
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = colorResource(R.color.color6),
-                    textColor = colorResource(R.color.white),
-                    cursorColor = colorResource(R.color.white),
-                    focusedIndicatorColor = colorResource(R.color.transparent),
-                    unfocusedIndicatorColor = colorResource(R.color.transparent),
-                    disabledIndicatorColor = colorResource(R.color.transparent)
-                ),
-                textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-                shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 280).dp)
-                    .height((screenHeight / 859.0 * 60).dp)
-                    .align(Alignment.CenterHorizontally)
-                    .imePadding(),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
-                )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.width((screenWidth / 411.0 * 280).dp)
             )
+            {
+                Button(
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp)
+                        .padding(0.dp, 0.dp, 0.dp, 0.dp),
+                    onClick = {mDatePickerDialog.show()},
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
+                ) {
 
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-
-            val listItems = arrayOf("Information", "Announcements", "Events")
-
-            val contextForToast = LocalContext.current.applicationContext
-
-            // state of the menu
-            var expanded by remember {
-                mutableStateOf(false)
-            }
-
-            // remember the selected item
-            var selectedItem by remember {
-                mutableStateOf(listItems[0])
-            }
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = {
-                    expanded = !expanded
+                    if (mDate.value == "")
+                    {
+                        Text(
+                            text = "date",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else
+                    {
+                        Text(
+                            text = "${mDate.value}",
+                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
-            ) {
-                // text field
+
+                Button(
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                    onClick = {mTimePickerDialog.show()},
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
+                ) {
+
+                    if (mTime.value == "")
+                    {
+                        Text(
+                            text = "time",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else
+                    {
+                        Text(
+                            text = "${mTime.value}",
+                            fontSize = (screenHeight/859.0 * 18).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.width((screenWidth / 411.0 * 280).dp)
+            )
+            {
                 TextField(
-                    value = selectedItem,
-                    onValueChange = {selectedItem},
-                    readOnly = true,
                     label = null,
+                    value = location,
+                    onValueChange = { location = it },
                     placeholder = {
                         Text(
-                            text = "type",
+                            text = "location",
                             fontSize = (screenHeight/859.0 * 16).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white2)
-                        )
-                    },
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(
-                            expanded = expanded
                         )
                     },
                     colors = TextFieldDefaults.textFieldColors(
@@ -587,77 +614,51 @@ fun WritePost(navController: NavHostController) {
                     textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
                     shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
                     modifier = Modifier
-                        .width((screenWidth / 411.0 * 280).dp)
-                        .height((screenHeight / 859.0 * 60).dp)
-                        .align(Alignment.CenterHorizontally)
-                        .imePadding()
-                        .menuAnchor()
-                )
-
-                // menu
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    // this is a column scope
-                    // all the items are added vertically
-                    listItems.forEach { selectedOption ->
-                        // menu item
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                text = selectedOption,
-                                fontSize = (screenHeight/859.0 * 12).sp,
-                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                color = colorResource(R.color.white2)
-                            )},
-                            onClick = {
-                            selectedItem = selectedOption
-                            Toast.makeText(contextForToast, selectedOption, Toast.LENGTH_SHORT).show()
-                            expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-
-            TextField(
-                label = null,
-                value = image,
-                onValueChange = { image = it },
-                placeholder = {
-                    Text(
-                        text = "image",
-                        fontSize = (screenHeight/859.0 * 16).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white2)
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Next) }
                     )
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = colorResource(R.color.color6),
-                    textColor = colorResource(R.color.white),
-                    cursorColor = colorResource(R.color.white),
-                    focusedIndicatorColor = colorResource(R.color.transparent),
-                    unfocusedIndicatorColor = colorResource(R.color.transparent),
-                    disabledIndicatorColor = colorResource(R.color.transparent)
-                ),
-                textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-                shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 280).dp)
-                    .height((screenHeight / 859.0 * 60).dp)
-                    .align(Alignment.CenterHorizontally)
-                    .imePadding(),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
                 )
-            )
+
+                TextField(
+                    label = null,
+                    value = image,
+                    onValueChange = { image = it },
+                    placeholder = {
+                        Text(
+                            text = "image",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2)
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = colorResource(R.color.color6),
+                        textColor = colorResource(R.color.white),
+                        cursorColor = colorResource(R.color.white),
+                        focusedIndicatorColor = colorResource(R.color.transparent),
+                        unfocusedIndicatorColor = colorResource(R.color.transparent),
+                        disabledIndicatorColor = colorResource(R.color.transparent)
+                    ),
+                    textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Text,
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Next) }
+                    )
+                )
+            }
 
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 70).dp))
 
