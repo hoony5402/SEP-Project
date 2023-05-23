@@ -338,14 +338,6 @@ fun RegisterPage(navController: NavHostController) {
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = name
                                 }
-                                user!!.updateProfile(profileUpdates)
-                                    .addOnCompleteListener{ task ->
-                                        if (task.isSuccessful)
-                                        {
-                                            Log.d(TAG, "User profile updated.")
-                                        }
-                                    }
-
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.navigate(Routes.Login.route)
@@ -375,13 +367,6 @@ fun RegisterPage(navController: NavHostController) {
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = name
                                 }
-                                user!!.updateProfile(profileUpdates)
-                                    .addOnCompleteListener{ task ->
-                                        if (task.isSuccessful)
-                                        {
-                                            Log.d(TAG, "User profile updated.")
-                                        }
-                                    }
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.navigate(Routes.Login.route)

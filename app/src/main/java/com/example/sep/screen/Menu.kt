@@ -69,10 +69,14 @@ fun MenuPage(navController: NavHostController) {
     var user = auth.currentUser
 
     var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var studentID by remember { mutableStateOf("20238009") }
 
     if (user != null)
     {
+        // Get info from DB here
         username = (user.displayName).toString()
+        email = (user.email).toString()
     }
 
 
@@ -146,11 +150,24 @@ fun MenuPage(navController: NavHostController) {
                 text = username,
                 textAlign = TextAlign.Center,
                 fontSize = (screenHeight/859.0 * 40).sp,
-                style = TextStyle(fontSize = (screenHeight/859.0 * 18).sp),
                 fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
             )
 
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 100).dp))
+            Text(
+                text = email,
+                textAlign = TextAlign.Center,
+                fontSize = (screenHeight/859.0 * 16).sp,
+                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+            )
+
+            Text(
+                text = studentID,
+                textAlign = TextAlign.Center,
+                fontSize = (screenHeight/859.0 * 16).sp,
+                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+            )
+
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 130).dp))
 
             Button(
                 onClick = {
@@ -178,13 +195,34 @@ fun MenuPage(navController: NavHostController) {
                     navController.navigate(Routes.Login.route)
                 },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color2)),
                 modifier = Modifier
                     .width((screenWidth / 411.0 * 300).dp)
                     .height((screenHeight / 859.0 * 50).dp)
             ) {
                 Text(
                     text = "logout",
+                    fontSize = (screenHeight/859.0 * 18).sp,
+                    color = colorResource(R.color.white),
+                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                )
+            }
+
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 70).dp))
+
+            Button(
+                onClick = {
+
+                    navController.navigate(Routes.Login.route)
+                },
+                shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
+                modifier = Modifier
+                    .width((screenWidth / 411.0 * 300).dp)
+                    .height((screenHeight / 859.0 * 50).dp)
+            ) {
+                Text(
+                    text = "delete account",
                     fontSize = (screenHeight/859.0 * 18).sp,
                     color = colorResource(R.color.white),
                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
