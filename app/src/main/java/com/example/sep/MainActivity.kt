@@ -2,14 +2,10 @@
 
 package com.example.sep
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Bundle
-import android.os.Debug
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -47,8 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavHost
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -58,18 +52,16 @@ import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
 import com.example.sep.screen.MenuPage
 import com.example.sep.screen.RegisterPage
+import com.example.sep.screen.WritePost
 import com.example.sep.ui.theme.SEPTheme
 import com.google.firebase.auth.FirebaseAuth
 
 private var auth: FirebaseAuth? = null
-private var context: Context? = null
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        context = this
-
-
         setContent {
             SEPTheme {
 
@@ -88,9 +80,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@SuppressLint("Range")
 @Composable
-fun ScreenMain(){
+fun ScreenMain() {
     var navController = rememberNavController()
     var startDest = Routes.Login.route
 
@@ -98,7 +89,8 @@ fun ScreenMain(){
         startDest = Routes.Homepage.route
     }
 
-    NavHost(navController = navController, startDestination = startDest) {
+    //NavHost(navController = navController, startDestination = startDest) {
+    NavHost(navController = navController, startDestination = Routes.WritePost.route) {
 
         composable(Routes.Login.route) {
             LoginPage(navController = navController)
@@ -122,6 +114,10 @@ fun ScreenMain(){
 
         composable(Routes.Menu.route) {
             MenuPage(navController = navController)
+        }
+
+        composable(Routes.WritePost.route) {
+            WritePost(navController = navController)
         }
     }
 }

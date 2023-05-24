@@ -47,7 +47,8 @@ import com.example.sep.R
 class CardObject {
     public var title: String = "Generic Title"
     public var description: String = "Generic description for the generic title."
-    public var time: String = "Generic date 24.06.2023 "
+    public var date: String = "Generic date 24/06/2023 "
+    public var time: String = "Generic time 02:05 pm "
     public var location: String = "Generic Location, Generic Address"
     public var type: String = "Announcements"
     public var image: String = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
@@ -75,7 +76,7 @@ fun TabScreen(
                 Card(
                     modifier = Modifier
                         .padding(20.dp, 0.dp, 20.dp, 0.dp)
-                        .size(380.dp, 160.dp)
+                        .size(380.dp, 140.dp)
                         .align(Alignment.CenterHorizontally)
                         .clip(RoundedCornerShape(25.dp))
                         .paint(
@@ -107,7 +108,7 @@ fun TabScreen(
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
-                            text = content.description,
+                            text = content.date,
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -122,13 +123,6 @@ fun TabScreen(
                         )
                         Text(
                             text = content.location,
-                            textAlign = TextAlign.Left,
-                            fontSize = (screenHeight/859.0 * 12).sp,
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                            color = colorResource(R.color.white)
-                        )
-                        Text(
-                            text = content.type,
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
