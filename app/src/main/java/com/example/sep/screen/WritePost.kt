@@ -732,37 +732,3 @@ fun WritePost(navController: NavHostController) {
         }
     }
 }
-
-fun get_post_num(type:String,context:Context): Int {
-    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref : DatabaseReference = db.getReference("posts").child(type.toString())
-    var num :Int = -1
-    var k = ref.addListenerForSingleValueEvent(object : ValueEventListener {
-        override fun onDataChange(dataSnapshot: DataSnapshot) {
-            Toast.makeText(context, "check", Toast.LENGTH_SHORT).show()
-            num = dataSnapshot.child("number").getValue(Int::class.java)!!
-            Toast.makeText(context, "check"+num, Toast.LENGTH_SHORT).show()
-        }
-
-        override fun onCancelled(databaseError: DatabaseError) {
-            num=-1
-
-        }
-    })
-    return num
-}
-fun submit_post(num:Int,type:String,title:String,description:String,image:String,year:Int,month:Int,day:Int,time:String,location:String){
-    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref : DatabaseReference = db.getReference("posts").child(type.toString())
-    ref.child("number").setValue(num+1)
-    ref.child(num.toString()).child("type").setValue(type)
-    ref = ref.child(num.toString())
-    ref.child("title").setValue(title)
-    ref.child("description").setValue(description)
-    ref.child("image").setValue(image)
-    ref.child("year").setValue(year)
-    ref.child("month").setValue(month)
-    ref.child("day").setValue(day)
-    ref.child("time").setValue(time)
-    ref.child("location").setValue(location)
-}
