@@ -694,7 +694,7 @@ fun WritePost(navController: NavHostController) {
                             num = dataSnapshot.child("number").getValue(Int::class.java)!!
 
                             ref.child("number").setValue(num+1)
-                            ref.child(num.toString()).child("type").setValue(type)
+                            ref.child(num.toString()).child("type").setValue(selectedItem)
                             var ref2 :DatabaseReference = ref.child(num.toString())
                             ref2.child("title").setValue(title)
                             ref2.child("description").setValue(description)
