@@ -133,7 +133,19 @@ fun WritePost(navController: NavHostController) {
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+
+            val day: String
+            val month: String
+            val year: String
+
+            day = "$mDayOfMonth"
+
+            month = "$mMonth"
+
+            year = "$mYear"
+
+            mDate.value = day + "/" + month + "/" + year
+
         }, mYear, mMonth, mDay
     )
 
@@ -541,7 +553,7 @@ fun WritePost(navController: NavHostController) {
                     {
                         Text(
                             text = "${mDate.value}",
-                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Left,
@@ -574,7 +586,7 @@ fun WritePost(navController: NavHostController) {
                     {
                         Text(
                             text = "${mTime.value}",
-                            fontSize = (screenHeight/859.0 * 18).sp,
+                            fontSize = (screenHeight/859.0 * 14).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Left,
