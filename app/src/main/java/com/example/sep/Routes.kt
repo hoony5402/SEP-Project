@@ -8,6 +8,4 @@ sealed class Routes(val route: String) {
     object Calendar : Routes("Calendar")
     object Menu : Routes("Menu")
     object WritePost : Routes("WritePost")
-
-
 }

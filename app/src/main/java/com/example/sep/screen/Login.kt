@@ -1,5 +1,8 @@
 package com.example.sep.screen
 
+import android.content.ContentValues
+import android.content.Context
+import android.util.Log
 import android.view.Window
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -52,16 +55,17 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import com.example.sep.MainActivity
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -79,24 +83,15 @@ fun LoginPage(navController: NavHostController) {
 
     var user = auth.currentUser
 
-    val db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    val ref :DatabaseReference = db.getReference("users")
-
     val context = LocalContext.current
 
     val focusManager = LocalFocusManager.current
-    /*
-    var wow :String = "bb"
-    var db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref :DatabaseReference = db.getReference("users")
-    ref.child(wow).setValue("yes")
-*/
+
     if(user!=null){
-        //login_success(user.email.toString())
+        login_success(user.email.toString(),context)
         Toast.makeText(context,user.email+" login success", Toast.LENGTH_SHORT).show()
         navController.navigate(Routes.Homepage.route)
-    }
-    else{
+    }else{
         MainActivity.userdata.reset()
     }
 
@@ -172,7 +167,7 @@ fun LoginPage(navController: NavHostController) {
                 .height((screenHeight / 859.0 * 70).dp)
                 .imePadding(),
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text,
+                keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
@@ -216,12 +211,12 @@ fun LoginPage(navController: NavHostController) {
             keyboardActions = KeyboardActions(
                 onGo = {
                     focusManager.moveFocus(FocusDirection.Enter)
-                    auth?.signInWithEmailAndPassword(email.toString(),password.toString())
-                        ?.addOnCompleteListener{task->
+                    auth.signInWithEmailAndPassword(email.toString(),password.toString())
+                        .addOnCompleteListener{task->
                             if(task.isSuccessful){
-                                login_success(email)
                                 Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                                 user = auth.currentUser
+                                login_success(email.toString(),context)
                                 navController.navigate(Routes.Homepage.route)
                             }else{
                                 Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
@@ -235,12 +230,12 @@ fun LoginPage(navController: NavHostController) {
 
         Button(
             onClick = {
-                auth?.signInWithEmailAndPassword(email.toString(),password.toString())
-                    ?.addOnCompleteListener{task->
+                auth.signInWithEmailAndPassword(email.toString(),password.toString())
+                    .addOnCompleteListener{task->
                         if(task.isSuccessful){
-                            login_success(email)
                             Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                             user = auth.currentUser
+                            login_success(email.toString(),context)
                             navController.navigate(Routes.Homepage.route)
                         }else{
                             Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
@@ -276,6 +271,48 @@ fun LoginPage(navController: NavHostController) {
     }
 }
 
-fun login_success(email:String){
+fun login_success(email:String,cont:Context){
+    var db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref = db.reference.child("users")
+    var keyuser = ""
+    ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            for(children in dataSnapshot.children){
+                if(children.child("email").getValue().toString()==email){
+                    keyuser = children.key.toString()
+                }
+            }
+            ref.child(keyuser.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot2: DataSnapshot) {
+                    MainActivity.userdata.set(
+                        dataSnapshot2.child("name").getValue().toString(),
+                        dataSnapshot2.child("email").getValue().toString(),
+                        dataSnapshot2.child("studentid").getValue().toString(),
+                        dataSnapshot2.child("password").getValue().toString()
+                    )
+                }
 
+                override fun onCancelled(databaseError: DatabaseError) {
+
+                }
+            })
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    })
+/*
+    ref.get().addOnCompleteListener {
+        if(it.isSuccessful){
+            Toast.makeText(cont,"listener2"+keyuser, Toast.LENGTH_SHORT).show()
+            for(children in it.result.children){
+                if(children.child("email").getValue().toString()==email){
+                    keyuser = children.key.toString()
+                }
+            }
+        }
+    }
+    Toast.makeText(cont,"Login WOW"+keyuser, Toast.LENGTH_SHORT).show()
+    */
 }
