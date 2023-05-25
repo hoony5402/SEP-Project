@@ -2,6 +2,7 @@ package com.example.sep.screen
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -71,10 +72,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -104,6 +111,8 @@ fun WritePost(navController: NavHostController) {
     var location by remember{mutableStateOf("")}
     var type by remember{mutableStateOf("")}
     var image by remember{mutableStateOf("")}
+
+    var submit_button_Enabled by remember { mutableStateOf(true) }
 
     // Fetching the Local Context
     val mContext = LocalContext.current
@@ -676,8 +685,37 @@ fun WritePost(navController: NavHostController) {
 
             Button(
                 onClick = {
+                    submit_button_Enabled = false
+                    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    var ref : DatabaseReference = db.getReference("posts").child(selectedItem)
+                    var num :Int = -1
+                    ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            num = dataSnapshot.child("number").getValue(Int::class.java)!!
 
+                            ref.child("number").setValue(num+1)
+                            ref.child(num.toString()).child("type").setValue(type)
+                            var ref2 :DatabaseReference = ref.child(num.toString())
+                            ref2.child("title").setValue(title)
+                            ref2.child("description").setValue(description)
+                            ref2.child("image").setValue(image)
+                            ref2.child("year").setValue(mYear)
+                            ref2.child("month").setValue(mMonth)
+                            ref2.child("day").setValue(mDay)
+                            ref2.child("time").setValue(mTime.value.toString())
+                            ref2.child("location").setValue(location)
+                            submit_button_Enabled = true
+                            Toast.makeText(context, "Post Success", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Routes.Homepage.route)
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Toast.makeText(context, "Post Failed", Toast.LENGTH_SHORT).show()
+                            submit_button_Enabled = true
+                        }
+                    })
                 },
+                enabled = submit_button_Enabled,
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier
@@ -693,4 +731,38 @@ fun WritePost(navController: NavHostController) {
             }
         }
     }
+}
+
+fun get_post_num(type:String,context:Context): Int {
+    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref : DatabaseReference = db.getReference("posts").child(type.toString())
+    var num :Int = -1
+    var k = ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            Toast.makeText(context, "check", Toast.LENGTH_SHORT).show()
+            num = dataSnapshot.child("number").getValue(Int::class.java)!!
+            Toast.makeText(context, "check"+num, Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            num=-1
+
+        }
+    })
+    return num
+}
+fun submit_post(num:Int,type:String,title:String,description:String,image:String,year:Int,month:Int,day:Int,time:String,location:String){
+    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref : DatabaseReference = db.getReference("posts").child(type.toString())
+    ref.child("number").setValue(num+1)
+    ref.child(num.toString()).child("type").setValue(type)
+    ref = ref.child(num.toString())
+    ref.child("title").setValue(title)
+    ref.child("description").setValue(description)
+    ref.child("image").setValue(image)
+    ref.child("year").setValue(year)
+    ref.child("month").setValue(month)
+    ref.child("day").setValue(day)
+    ref.child("time").setValue(time)
+    ref.child("location").setValue(location)
 }

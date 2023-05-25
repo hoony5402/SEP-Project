@@ -82,6 +82,9 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    companion object {
+        var userdata :UserData = UserData();
+    }
 }
 
 @Composable
