@@ -1,7 +1,9 @@
 package com.example.sep.screen
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.util.Half.toFloat
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -73,6 +75,9 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.userProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 private var auth: FirebaseAuth? = null
 
@@ -325,20 +330,27 @@ fun RegisterPage(navController: NavHostController) {
             keyboardActions = KeyboardActions(
                 onGo = {
                     focusManager.moveFocus(FocusDirection.Enter)
-                    auth!!.createUserWithEmailAndPassword(
-                        email.toString(),
-                        password.toString()
-                    )
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
-                                    .show()
-                                navController.navigate(Routes.Login.route)
-                            } else {
-                                Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
-                                    .show()
+                    var check = register_check(name,studentID,email,password,reenterpassword)
+                    if (check!="y") {
+                        Toast.makeText(context, check.toString(), Toast.LENGTH_SHORT).show()
+                    }else{
+                        auth!!.createUserWithEmailAndPassword(
+                            email.toString(),
+                            password.toString()
+                        )
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    register_success(name,studentID,email,password);
+                                    Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
+                                        .show()
+                                    auth!!.signOut()
+                                    navController.navigate(Routes.Login.route)
+                                } else {
+                                    Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             }
-                        }
+                    }
                 }
             )
         )
@@ -347,8 +359,9 @@ fun RegisterPage(navController: NavHostController) {
 
         Button(
             onClick = {
-                if (password != reenterpassword) {
-                    Toast.makeText(context, "Password is wrong", Toast.LENGTH_SHORT).show()
+                var check = register_check(name,studentID,email,password,reenterpassword)
+                if (check!="y") {
+                    Toast.makeText(context, check.toString(), Toast.LENGTH_SHORT).show()
                 } else {
                     auth!!.createUserWithEmailAndPassword(
                         email.toString(),
@@ -356,8 +369,10 @@ fun RegisterPage(navController: NavHostController) {
                     )
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
+                                register_success(name,studentID,email,password);
                                 Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
                                     .show()
+                                auth!!.signOut()
                                 navController.navigate(Routes.Login.route)
                             } else {
                                 Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
@@ -382,4 +397,30 @@ fun RegisterPage(navController: NavHostController) {
         }
     }
 }
+fun register_check(name:String,student:String,email:String,password:String,repassword:String): String {
+    if(name==""){
+        return "type name"
+    }
+    if(student==""){
+        return "type student ID"
+    }
+    if(email==""){
+        return "type email"
+    }
+    if(password.length<6){
+        return "make password 6 or more"
+    }
+    if(password!=repassword){
+        return "re-enter password is wrong"
+    }
+    return "y"
+}
+fun register_success(name: String,student: String,email: String,password: String) {
+    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref : DatabaseReference = db.getReference("users")
+    ref.child(name).child("email").setValue(email)
+    ref.child(name).child("name").setValue(name)
+    ref.child(name).child("studentid").setValue(student)
+    ref.child(name).child("password").setValue(password)
 
+}
