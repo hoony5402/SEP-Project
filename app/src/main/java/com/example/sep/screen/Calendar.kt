@@ -79,6 +79,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
@@ -271,8 +272,12 @@ fun CalendarPage(navController: NavHostController) {
 
                         Card(
                             modifier = Modifier
-                                .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 0).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                                .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 280).dp)
+                                .clickable{
+                                    MainActivity.clickflag = i
+                                    navController.navigate(Routes.Post_Calendar.route)
+                                }
+                                .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)
+                                .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
                                 .align(Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape((screenHeight/859.0 * 25).dp))
                                 .paint(
@@ -290,22 +295,14 @@ fun CalendarPage(navController: NavHostController) {
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 10).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                                    .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 280).dp)
+                                    .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, 0.dp)
+                                    .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
                             ) {
                                 Text(
                                     text = title + " " + i.toString(),
                                     textAlign = TextAlign.Left,
                                     fontSize = (screenHeight/859.0 * 20).sp,
                                     fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
-                                    color = colorResource(R.color.white)
-                                )
-                                Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
-                                Text(
-                                    text = description,
-                                    textAlign = TextAlign.Left,
-                                    fontSize = (screenHeight/859.0 * 12).sp,
-                                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                                     color = colorResource(R.color.white)
                                 )
                                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
@@ -324,26 +321,6 @@ fun CalendarPage(navController: NavHostController) {
                                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                                     color = colorResource(R.color.white)
                                 )
-                                Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
-                                Button(
-                                    onClick = {
-                                        Toast.makeText(context, "title " + i + " clicked", Toast.LENGTH_SHORT).show()
-                                    },
-                                    shape = RoundedCornerShape((screenHeight/859.0 * 10).dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
-                                    modifier = Modifier
-                                        .width((screenWidth / 411.0 * 170).dp)
-                                        .height((screenHeight / 859.0 * 40).dp)
-                                        .align(Alignment.CenterHorizontally)
-                                ) {
-                                    Text(
-                                        text = "remove from calendar",
-                                        fontSize = (screenHeight/859.0 * 10).sp,
-                                        color = colorResource(R.color.white),
-                                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
                             }
                         }
                     }

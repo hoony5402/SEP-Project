@@ -3,6 +3,7 @@ package com.example.sep.screen
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,13 +59,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
+import com.example.sep.ScreenMain
 
 class CardObject {
     public var title: String = "Generic Title"
@@ -77,7 +82,7 @@ class CardObject {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabScreen(content: CardObject) {
+fun TabScreen(content: CardObject, navController: NavController){
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -103,10 +108,19 @@ fun TabScreen(content: CardObject) {
 
                 Card(
                     modifier = Modifier
-                        .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                        .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 300).dp)
+                        .clickable{
+                            MainActivity.clickflag = i
+                            navController.navigate(Routes.Post_Homepage.route)
+                        }
+                        .padding(
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 5).dp,
+                            (screenHeight / 859.0 * 20).dp,
+                            0.dp
+                        )
+                        .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 150).dp)
                         .align(Alignment.CenterHorizontally)
-                        .clip(RoundedCornerShape((screenHeight/859.0 * 25).dp))
+                        .clip(RoundedCornerShape((screenHeight / 859.0 * 25).dp))
                         .paint(
                             painter = rememberAsyncImagePainter(
                                 model = ImageRequest
@@ -122,22 +136,19 @@ fun TabScreen(content: CardObject) {
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                            .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 300).dp)
+                            .padding(
+                                (screenHeight / 859.0 * 20).dp,
+                                (screenHeight / 859.0 * 20).dp,
+                                (screenHeight / 859.0 * 20).dp,
+                                0.dp
+                            )
+                            .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 150).dp)
                     ) {
                         Text(
                             text = title + " " + i.toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 20).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
-                            color = colorResource(R.color.white)
-                        )
-                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
-                        Text(
-                            text = description,
-                            textAlign = TextAlign.Left,
-                            fontSize = (screenHeight/859.0 * 12).sp,
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white)
                         )
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
@@ -156,26 +167,6 @@ fun TabScreen(content: CardObject) {
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white)
                         )
-                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 35).dp))
-                        Button(
-                            onClick = {
-                                Toast.makeText(context, "title " + i + " clicked", Toast.LENGTH_SHORT).show()
-                            },
-                            shape = RoundedCornerShape((screenHeight/859.0 * 10).dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
-                            modifier = Modifier
-                                .width((screenWidth / 411.0 * 150).dp)
-                                .height((screenHeight / 859.0 * 40).dp)
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(
-                                text = "add to calendar",
-                                fontSize = (screenHeight/859.0 * 10).sp,
-                                color = colorResource(R.color.white),
-                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                textAlign = TextAlign.Center
-                            )
-                        }
                     }
                 }
             }

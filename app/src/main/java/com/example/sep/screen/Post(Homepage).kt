@@ -3,77 +3,59 @@ package com.example.sep.screen
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Arrangement.Absolute.Center
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import kotlinx.coroutines.launch
-
-enum class BottomIcons {
-    HOME, CALENDAR, MAP
-}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun HomepagePage(navController: NavHostController) {
-
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(colorResource(R.color.black30))
+fun PostPage_Homepage(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -86,7 +68,13 @@ fun HomepagePage(navController: NavHostController) {
 
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
-    var post_number = "-1"
+    val title = "Generic Title"
+    val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
+    val date = "24/06/2023 "
+    val time = "02:05 pm "
+    val location = "Generic Location, Generic Address"
+    val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    val type = "Announcements"
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -102,9 +90,9 @@ fun HomepagePage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                            Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Menu.route)
+                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -122,7 +110,7 @@ fun HomepagePage(navController: NavHostController) {
                             modifier = Modifier
                                 .size((screenHeight / 859.0 * 175).dp),
 
-                        )
+                            )
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors (
@@ -148,10 +136,10 @@ fun HomepagePage(navController: NavHostController) {
                     ) {
                         IconButton(
                             onClick = {
-                            selected.value = BottomIcons.CALENDAR
-                            Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Calendar.route)
+                                selected.value = BottomIcons.CALENDAR
+                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -165,10 +153,10 @@ fun HomepagePage(navController: NavHostController) {
                         }
                         IconButton(
                             onClick = {
-                            selected.value = BottomIcons.HOME
-                            Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Homepage.route)
+                                selected.value = BottomIcons.HOME
+                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -182,10 +170,10 @@ fun HomepagePage(navController: NavHostController) {
                         }
                         IconButton(
                             onClick = {
-                            selected.value = BottomIcons.MAP
-                            Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                .show()
-                            navController.navigate(Routes.Map.route)
+                                selected.value = BottomIcons.MAP
+                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
+                                    .show()
+                                navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
                         ) {
@@ -203,53 +191,107 @@ fun HomepagePage(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column (
-            modifier = Modifier
-                .padding(paddingValues)
-                .background(colorResource(R.color.white))
+            modifier = Modifier.padding(paddingValues).fillMaxWidth(),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TabRow(
-                selectedTabIndex = pagerState.currentPage,
-                containerColor = colorResource(R.color.transparent),
-                indicator = { tabPositions ->
-                    TabRowDefaults.Indicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(currentTabPosition = tabPositions[pagerState.currentPage])
-                            .padding(horizontal = (screenHeight / 859.0 * 40).dp)
-                            .clip(RoundedCornerShape((screenHeight / 859.0 * 10).dp)),
-                        color = colorResource(R.color.color1),
-                        height = 5.dp
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+
+            Text(
+                text = type,
+                textAlign = TextAlign.Center,
+                fontSize = (screenHeight/859.0 * 30).sp,
+                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                color = colorResource(R.color.black)
+            )
+
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+
+            Card(
+                modifier = Modifier
+                    .padding(
+                        (screenHeight / 859.0 * 20).dp,
+                        (screenHeight / 859.0 * 5).dp,
+                        (screenHeight / 859.0 * 20).dp,
+                        0.dp
                     )
-                },
-                divider = {}
+                    .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 500).dp)
+                    .align(Alignment.CenterHorizontally)
+                    .clip(RoundedCornerShape((screenHeight / 859.0 * 25).dp))
+                    .paint(
+                        painter = rememberAsyncImagePainter(
+                            model = ImageRequest
+                                .Builder(LocalContext.current)
+                                .data(image)
+                                .scale(Scale.FIT)
+                                .build()
+                        ),
+                        contentScale = ContentScale.Crop
+                    ),
+                colors = CardDefaults.cardColors(containerColor = colorResource(R.color.black70)
+                )
             ) {
-                tabs.forEachIndexed { index, item ->
-                    Tab(
-                        selected = index == pagerState.currentPage,
-                        selectedContentColor = colorResource(R.color.color1),
-                        unselectedContentColor = colorResource(R.color.black50),
-                        text = { Text(text = item.title,
-                            style = TextStyle(fontSize = (screenHeight/859.0 * 13).sp),
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                            color = colorResource(R.color.color1)
-                        ) },
-                        onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
+                Column(
+                    modifier = Modifier
+                        .padding(
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 20).dp,
+                            0.dp
+                        )
+                        .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 500).dp)
+                ) {
+                    Text(
+                        text = title + " " + MainActivity.clickflag.toString(),
+                        textAlign = TextAlign.Left,
+                        fontSize = (screenHeight/859.0 * 25).sp,
+                        fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
+                        color = colorResource(R.color.white),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
+                    Text(
+                        text = description,
+                        textAlign = TextAlign.Left,
+                        fontSize = (screenHeight/859.0 * 18).sp,
+                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                        color = colorResource(R.color.white)
+                    )
+                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+                    Text(
+                        text = date + " - " + time,
+                        textAlign = TextAlign.Left,
+                        fontSize = (screenHeight/859.0 * 18).sp,
+                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                        color = colorResource(R.color.white)
+                    )
+                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+                    Text(
+                        text = location,
+                        textAlign = TextAlign.Left,
+                        fontSize = (screenHeight/859.0 * 18).sp,
+                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                        color = colorResource(R.color.white)
                     )
                 }
             }
-            HorizontalPager(
-                pageCount = tabs.size,
-                state = pagerState
+
+            Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+
+            Button(
+                onClick = {},
+                shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
+                modifier = Modifier
+                    .width((screenWidth / 411.0 * 300).dp)
+                    .height((screenHeight / 859.0 * 50).dp)
             ) {
-                tabs[pagerState.currentPage].screen(navController)
-
-                var clickpost by rememberSaveable { mutableStateOf(MainActivity.clickflag) }
-
-                if (clickpost != -1)
-                {
-                    Toast.makeText(context, "I will now route to post number " + clickpost, Toast.LENGTH_SHORT).show()
-                }
-
-//                Toast.makeText(context, "I will now route to post number " + clickpost, Toast.LENGTH_SHORT).show()
+                Text(
+                    text = "add to calendar",
+                    fontSize = (screenHeight/859.0 * 20).sp,
+                    color = colorResource(R.color.white),
+                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                )
             }
         }
     }

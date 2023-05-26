@@ -2,6 +2,7 @@
 
 package com.example.sep
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -54,6 +55,8 @@ import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
 import com.example.sep.screen.MenuPage
+import com.example.sep.screen.PostPage_Calendar
+import com.example.sep.screen.PostPage_Homepage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.screen.WritePost
 import com.example.sep.ui.theme.SEPTheme
@@ -63,7 +66,6 @@ import com.google.firebase.auth.FirebaseAuth
 private var auth: FirebaseAuth? = null
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -84,6 +86,7 @@ class MainActivity : ComponentActivity() {
     }
     companion object {
         var userdata :UserData = UserData();
+        var clickflag: Int = -1;
     }
 }
 
@@ -124,6 +127,14 @@ fun ScreenMain(){
 
         composable(Routes.WritePost.route) {
             WritePost(navController = navController)
+        }
+
+        composable(Routes.Post_Homepage.route) {
+            PostPage_Homepage(navController = navController)
+        }
+
+        composable(Routes.Post_Calendar.route) {
+            PostPage_Calendar(navController = navController)
         }
     }
 }
