@@ -83,6 +83,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -128,7 +130,7 @@ fun WritePost(navController: NavHostController) {
 
     // Fetching current year, month and day
     mYear = mCalendar.get(Calendar.YEAR)
-    mMonth = mCalendar.get(Calendar.MONTH)
+    mMonth = mCalendar.get(Calendar.MONTH)+1
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
 
     mCalendar.time = Date()
@@ -137,19 +139,19 @@ fun WritePost(navController: NavHostController) {
     // store date in string format
     val mDate = remember { mutableStateOf("") }
 
+    var day: String = ""
+    var month: String = ""
+    var year: String = ""
     // Declaring DatePickerDialog and setting
     // initial values as current values (present year, month and day)
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-
-            val day: String
-            val month: String
-            val year: String
+            val mMonth2 = mMonth+1
 
             day = "$mDayOfMonth"
 
-            month = "$mMonth"
+            month = "$mMonth2"
 
             year = "$mYear"
 
@@ -689,6 +691,12 @@ fun WritePost(navController: NavHostController) {
                     var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
                     var ref : DatabaseReference = db.getReference("posts").child(selectedItem)
                     var num :Int = -1
+                    var writer :String = ""
+                    if(FirebaseAuth.getInstance().currentUser!=null){
+                        writer = MainActivity.userdata.username.toString()
+                    }
+                    val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+                    val current_time = LocalDateTime.now().format(format)
                     ref.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             num = dataSnapshot.child("number").getValue(Int::class.java)!!
@@ -696,12 +704,14 @@ fun WritePost(navController: NavHostController) {
                             ref.child("number").setValue(num+1)
                             ref.child(num.toString()).child("type").setValue(selectedItem)
                             var ref2 :DatabaseReference = ref.child(num.toString())
+                            ref2.child("writer").setValue(writer)
+                            ref2.child("write time").setValue(current_time.toString())
                             ref2.child("title").setValue(title)
                             ref2.child("description").setValue(description)
                             ref2.child("image").setValue(image)
-                            ref2.child("year").setValue(mYear)
-                            ref2.child("month").setValue(mMonth)
-                            ref2.child("day").setValue(mDay)
+                            ref2.child("year").setValue(year)
+                            ref2.child("month").setValue(month)
+                            ref2.child("day").setValue(day)
                             ref2.child("time").setValue(mTime.value.toString())
                             ref2.child("location").setValue(location)
                             submit_button_Enabled = true
