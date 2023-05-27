@@ -59,6 +59,7 @@ import com.example.sep.screen.PostPage_Calendar
 import com.example.sep.screen.PostPage_Homepage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.screen.WritePost
+import com.example.sep.screen.TabScreen
 import com.example.sep.ui.theme.SEPTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
