@@ -79,6 +79,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
@@ -115,6 +116,8 @@ fun CalendarPage(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.CALENDAR) }
+
+    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
     Scaffold(
         containerColor = colorResource(R.color.white),
