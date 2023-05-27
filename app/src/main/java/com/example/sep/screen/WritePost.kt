@@ -1,10 +1,8 @@
 package com.example.sep.screen
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.database.Cursor
-import android.util.Log
+import android.content.Context
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -15,19 +13,24 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -36,6 +39,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -65,14 +72,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.sep.DBHelper
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.launch
 import java.util.*
 
-
-@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun WritePost(navController: NavHostController) {
@@ -100,7 +112,7 @@ fun WritePost(navController: NavHostController) {
     var type by remember{mutableStateOf("")}
     var image by remember{mutableStateOf("")}
 
-    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
+    var submit_button_Enabled by remember { mutableStateOf(true) }
 
     // Fetching the Local Context
     val mContext = LocalContext.current
@@ -130,7 +142,19 @@ fun WritePost(navController: NavHostController) {
     val mDatePickerDialog = DatePickerDialog(
         mContext,
         { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-            mDate.value = "$mDayOfMonth/${mMonth+1}/$mYear"
+
+            val day: String
+            val month: String
+            val year: String
+
+            day = "$mDayOfMonth"
+
+            month = "$mMonth"
+
+            year = "$mYear"
+
+            mDate.value = day + "/" + month + "/" + year
+
         }, mYear, mMonth, mDay
     )
 
@@ -538,7 +562,7 @@ fun WritePost(navController: NavHostController) {
                     {
                         Text(
                             text = "${mDate.value}",
-                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Left,
@@ -571,7 +595,7 @@ fun WritePost(navController: NavHostController) {
                     {
                         Text(
                             text = "${mTime.value}",
-                            fontSize = (screenHeight/859.0 * 18).sp,
+                            fontSize = (screenHeight/859.0 * 14).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
                             textAlign = TextAlign.Left,
@@ -661,31 +685,37 @@ fun WritePost(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    var database = dbHelper.writableDatabase
-                    database.execSQL("INSERT INTO posts(type,title,description,date,time,location,image) values('${selectedItem}','${title}','${description}','${mDate.value}','${mTime.value}','${location}','${image}');")
+                    submit_button_Enabled = false
+                    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    var ref : DatabaseReference = db.getReference("posts").child(selectedItem)
+                    var num :Int = -1
+                    ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            num = dataSnapshot.child("number").getValue(Int::class.java)!!
 
-                    /*
-                    var cursor = database.rawQuery("SELECT * FROM posts;",null)
-                    while(cursor.moveToNext()){
-                        var _id = cursor.getString(cursor.getColumnIndex("id"))
-                        var _type = cursor.getString(cursor.getColumnIndex("type"))
-                        var _title = cursor.getString(cursor.getColumnIndex("title"))
-                        var _desc = cursor.getString(cursor.getColumnIndex("description"))
-                        var _date = cursor.getString(cursor.getColumnIndex("date"))
-                        var _time = cursor.getString(cursor.getColumnIndex("time"))
-                        var _location = cursor.getString(cursor.getColumnIndex("location"))
-                        var _image = cursor.getString(cursor.getColumnIndex("image"))
-                        Log.d("jisoo","  id:${_id}")
-                        Log.d("jisoo","type:${_type}")
-                        Log.d("jisoo","titl:${_title}")
-                        Log.d("jisoo","desc:${_desc}")
-                        Log.d("jisoo","date:${_date}")
-                        Log.d("jisoo","time:${_time}")
-                        Log.d("jisoo","loca:${_location}")
-                        Log.d("jisoo","imag:${_image}")
-                    }
-                     */
+                            ref.child("number").setValue(num+1)
+                            ref.child(num.toString()).child("type").setValue(selectedItem)
+                            var ref2 :DatabaseReference = ref.child(num.toString())
+                            ref2.child("title").setValue(title)
+                            ref2.child("description").setValue(description)
+                            ref2.child("image").setValue(image)
+                            ref2.child("year").setValue(mYear)
+                            ref2.child("month").setValue(mMonth)
+                            ref2.child("day").setValue(mDay)
+                            ref2.child("time").setValue(mTime.value.toString())
+                            ref2.child("location").setValue(location)
+                            submit_button_Enabled = true
+                            Toast.makeText(context, "Post Success", Toast.LENGTH_SHORT).show()
+                            navController.navigate(Routes.Homepage.route)
+                        }
+
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            Toast.makeText(context, "Post Failed", Toast.LENGTH_SHORT).show()
+                            submit_button_Enabled = true
+                        }
+                    })
                 },
+                enabled = submit_button_Enabled,
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -33,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +49,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.sep.screen.CalendarPage
+import com.example.sep.screen.CardObject
 import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
@@ -54,6 +57,7 @@ import com.example.sep.screen.MenuPage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.screen.WritePost
 import com.example.sep.ui.theme.SEPTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
 
 private var auth: FirebaseAuth? = null
@@ -78,19 +82,21 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    companion object {
+        var userdata :UserData = UserData();
+    }
 }
 
 @Composable
-fun ScreenMain() {
-    var navController = rememberNavController()
-    var startDest = Routes.Login.route
+fun ScreenMain(){
+    val navController = rememberNavController()
 
-    if (auth?.currentUser != null) {
-        startDest = Routes.Homepage.route
-    }
+    val context = LocalContext.current
 
-    //NavHost(navController = navController, startDestination = startDest) {
-    NavHost(navController = navController, startDestination = Routes.WritePost.route) {
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(colorResource(R.color.white))
+
+    NavHost(navController = navController, startDestination = Routes.Login.route) {
 
         composable(Routes.Login.route) {
             LoginPage(navController = navController)

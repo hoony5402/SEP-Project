@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -70,13 +71,14 @@ fun MenuPage(navController: NavHostController) {
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var studentID by remember { mutableStateOf("20238009") }
+    var studentID by remember { mutableStateOf("") }
 
     if (user != null)
     {
         // Get info from DB here
-        username = (user.displayName).toString()
-        email = (user.email).toString()
+        username = MainActivity.userdata.username.toString()
+        email = MainActivity.userdata.useremail.toString()
+        studentID = MainActivity.userdata.studentid.toString()
     }
 
 
