@@ -51,11 +51,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.DBHelper
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -194,6 +197,7 @@ fun MenuPage(navController: NavHostController) {
             Button(
                 onClick = {
                     FirebaseAuth.getInstance().signOut()
+                    logout_success(context)
                     navController.navigate(Routes.Login.route)
                 },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
@@ -232,4 +236,12 @@ fun MenuPage(navController: NavHostController) {
             }
         }
     }
+}
+
+fun logout_success(context: android.content.Context) {
+    val dbHelper = DBHelper(context, "posts.db", null, 1)
+    var database = dbHelper.writableDatabase
+    database.execSQL("INSERT or REPLACE INTO lastlogin VALUES('"+
+            MainActivity.userdata.useremail+"','"+
+            MainActivity.userdata.userpassword+"');")
 }

@@ -21,9 +21,14 @@ class DBHelper(
                 "location text,"+
                 "image text"+
                 ");")
+        db.execSQL("CREATE TABLE if not exists lastlogin(" +
+                "email text,"+
+                "password text"+
+                ");")
     }
 
     override fun onUpgrade (db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE if exists posts")
+        db.execSQL("DROP TABLE if exists lastemail")
     }
 }
