@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.icu.lang.UCharacter.DecompositionType.NARROW
 import android.widget.Toast
@@ -102,6 +103,7 @@ import java.time.DayOfWeek
 import java.time.Year
 import java.util.Locale
 
+@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CalendarPage(navController: NavHostController) {
@@ -249,10 +251,9 @@ fun CalendarPage(navController: NavHostController) {
 
             Column {
 
-
                 val title = "Generic Title"
                 val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-                val date = selection[0].dayOfMonth.toString() + "/" + selection[0].monthNumber.toString() + "/" + selection[0].year.toString()
+                val selectDate = selection[0].dayOfMonth.toString() + "/" + "%02d".format(selection[0].monthNumber) + "/" + selection[0].year.toString()
                 val time = "02:05 pm "
                 val location = "Generic Location, Generic Address"
                 val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
@@ -269,8 +270,18 @@ fun CalendarPage(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    for (i in 1..100) {
+                    //===================================================================
+                    //for (i in 1..100) {
+                    var database = dbHelper.writableDatabase
+                    var cursor = database.rawQuery("SELECT * FROM posts;", null)
+                    while (cursor.moveToNext()) {
+                        var i = cursor.getString(cursor.getColumnIndex("id"))
+                        var type = cursor.getString(cursor.getColumnIndex("type"))
+                        val date = cursor.getString(cursor.getColumnIndex("date"))
+
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+
+                        if (selectDate != date) continue
 
                         Card(
                             modifier = Modifier
@@ -313,7 +324,7 @@ fun CalendarPage(navController: NavHostController) {
                                 )
                                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                                 Text(
-                                    text = date + " - " + time,
+                                    text = selectDate + " - " + time,
                                     textAlign = TextAlign.Left,
                                     fontSize = (screenHeight/859.0 * 12).sp,
                                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -330,7 +341,9 @@ fun CalendarPage(navController: NavHostController) {
                                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
                                 Button(
                                     onClick = {
-                                        Toast.makeText(context, "title " + i + " clicked", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "title " + i + " deleted", Toast.LENGTH_SHORT).show()
+                                        database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
+                                        navController.navigate(Routes.Calendar.route)
                                     },
                                     shape = RoundedCornerShape((screenHeight/859.0 * 10).dp),
                                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
@@ -395,7 +408,7 @@ private fun MonthHeader(monthState: MonthState) {
         IconButton(
             onClick = {
                 monthState.currentMonth = monthState.currentMonth.plusMonths(1)
-              },
+            },
             modifier = Modifier.size((screenHeight / 859.0 * 20).dp)
         ) {
             val delete = painterResource(id = R.drawable.next)

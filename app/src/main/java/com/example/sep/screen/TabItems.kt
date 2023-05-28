@@ -13,7 +13,8 @@ val tabs = listOf(
         title = "Information",
         screen = {
             TabScreen(
-                content = CardObject()
+                content = CardObject(),
+                type = "Information"
             )
         }
     ),
@@ -21,7 +22,8 @@ val tabs = listOf(
         title = "Announcements",
         screen = {
             TabScreen(
-                content = CardObject()
+                content = CardObject(),
+                type = "Announcements"
             )
         }
     ),
@@ -29,7 +31,8 @@ val tabs = listOf(
         title = "Events",
         screen = {
             TabScreen(
-                content = CardObject()
+                content = CardObject(),
+                type = "Events"
             )
         }
     )
