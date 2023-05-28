@@ -1,9 +1,7 @@
 package com.example.sep.screen
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
-import android.database.Cursor
 import android.util.Log
 import android.view.Window
 import android.widget.Toast
@@ -57,7 +55,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.sep.DBHelper
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
@@ -98,12 +95,6 @@ fun LoginPage(navController: NavHostController) {
         MainActivity.userdata.reset()
     }
 
-    var (lastemail, lastpassword) = GetLastLoginInfo(context)
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    email = lastemail.toString()
-    password = lastpassword.toString()
-
     Box(
         modifier = Modifier
             .padding(30.dp, (screenHeight / 859.0 * 380).dp, 30.dp, 0.dp)
@@ -118,6 +109,10 @@ fun LoginPage(navController: NavHostController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        var email by remember { mutableStateOf("") }
+        var password by remember { mutableStateOf("") }
+
 
         Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
@@ -320,18 +315,4 @@ fun login_success(email:String,cont:Context){
     }
     Toast.makeText(cont,"Login WOW"+keyuser, Toast.LENGTH_SHORT).show()
     */
-}
-
-@SuppressLint("Range")
-fun GetLastLoginInfo(context: Context): Array<Any>{
-    var dbHelper = DBHelper(context, "posts.db", null, 1)
-    var database = dbHelper.writableDatabase
-    var c : Cursor = database.query("lastlogin",null,null,null,null,null,null)
-    var email = ""
-    var password = ""
-    while(c.moveToNext()){
-        email = c.getString(c.getColumnIndex("email"))
-        password = c.getString(c.getColumnIndex("password"))
-    }
-    return arrayOf(email, password)
 }
