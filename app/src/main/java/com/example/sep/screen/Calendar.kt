@@ -80,6 +80,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.sep.MainActivity
+import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
@@ -116,6 +117,8 @@ fun CalendarPage(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.CALENDAR) }
+
+    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -247,10 +250,9 @@ fun CalendarPage(navController: NavHostController) {
 
             Column {
 
-
                 val title = "Generic Title"
                 val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-                val date = selection[0].dayOfMonth.toString() + "/" + selection[0].monthNumber.toString() + "/" + selection[0].year.toString()
+                val selectDate = selection[0].dayOfMonth.toString() + "/" + "%02d".format(selection[0].monthNumber) + "/" + selection[0].year.toString()
                 val time = "02:05 pm "
                 val location = "Generic Location, Generic Address"
                 val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
@@ -267,8 +269,18 @@ fun CalendarPage(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    for (i in 1..100) {
+                    //===================================================================
+                    //for (i in 1..100) {
+                    var database = dbHelper.writableDatabase
+                    var cursor = database.rawQuery("SELECT * FROM posts;", null)
+                    while (cursor.moveToNext()) {
+                        var i = cursor.getString(cursor.getColumnIndex("id"))
+                        var type = cursor.getString(cursor.getColumnIndex("type"))
+                        val date = cursor.getString(cursor.getColumnIndex("date"))
+
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+
+                        if (selectDate != date) continue
 
                         Card(
                             modifier = Modifier
@@ -307,7 +319,7 @@ fun CalendarPage(navController: NavHostController) {
                                 )
                                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                                 Text(
-                                    text = date + " - " + time,
+                                    text = selectDate + " - " + time,
                                     textAlign = TextAlign.Left,
                                     fontSize = (screenHeight/859.0 * 12).sp,
                                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),

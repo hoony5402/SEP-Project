@@ -66,6 +66,7 @@ import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import com.example.sep.MainActivity
+import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import com.example.sep.ScreenMain
@@ -73,16 +74,16 @@ import com.example.sep.ScreenMain
 class CardObject {
     public var title: String = "Generic Title"
     public var description: String = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-    public var date: String = "24/06/2023 "
-    public var time: String = "02:05 pm "
+    public var date: String = "24/06/2023"
+    public var time: String = "02:05 pm"
     public var location: String = "Generic Location, Generic Address"
-    public var type: String = "Announcements"
+    //public var type: String = "Announcements"
     public var image: String = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabScreen(content: CardObject, navController: NavController){
+fun TabScreen(content: CardObject, navController: NavController, type: String){
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
