@@ -52,6 +52,7 @@ import coil.size.Scale
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
+import com.example.sep.DBHelper
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -70,11 +71,13 @@ fun PostPage_Calendar(navController: NavHostController) {
 
     val title = "Generic Title"
     val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-    val date = "24/06/2023 "
-    val time = "02:05 pm "
+    val date = "24/06/2023"
+    val time = "02:05 pm"
     val location = "Generic Location, Generic Address"
     val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
     val type = "Announcements"
+
+    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -279,7 +282,13 @@ fun PostPage_Calendar(navController: NavHostController) {
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
             Button(
-                onClick = {},
+                onClick = {
+                    var i = MainActivity.clickflag
+                    var database = dbHelper.writableDatabase
+                    Toast.makeText(context, "title " + i + " deleted", Toast.LENGTH_SHORT).show()
+                    database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
+                    navController.navigate(Routes.Calendar.route)
+                },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier

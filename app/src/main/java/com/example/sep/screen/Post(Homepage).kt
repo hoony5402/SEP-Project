@@ -52,6 +52,7 @@ import coil.size.Scale
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
+import com.example.sep.DBHelper
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -70,11 +71,13 @@ fun PostPage_Homepage(navController: NavHostController) {
 
     val title = "Generic Title"
     val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-    val date = "24/06/2023 "
-    val time = "02:05 pm "
+    val date = "24/06/2023"
+    val time = "02:05 pm"
     val location = "Generic Location, Generic Address"
     val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
     val type = "Announcements"
+
+    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -279,7 +282,18 @@ fun PostPage_Homepage(navController: NavHostController) {
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
             Button(
-                onClick = {},
+                onClick = {
+                    var i = MainActivity.clickflag
+                    Toast.makeText(context, "title " + i.toString() + " clicked", Toast.LENGTH_SHORT).show()
+                    var database = dbHelper.writableDatabase
+
+                    var count = 0
+                    var cursor = database.rawQuery("SELECT count(*) FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
+                    if (cursor.moveToFirst()) count = cursor.getInt(0)
+
+                    if (count == 0) database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}');")
+                    else Toast.makeText(context, "Already Exist", Toast.LENGTH_SHORT).show()
+                },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
                 modifier = Modifier

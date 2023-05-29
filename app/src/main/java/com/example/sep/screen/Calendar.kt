@@ -285,7 +285,7 @@ fun CalendarPage(navController: NavHostController) {
                         Card(
                             modifier = Modifier
                                 .clickable{
-                                    MainActivity.clickflag = i
+                                    MainActivity.clickflag = i.toInt()
                                     navController.navigate(Routes.Post_Calendar.route)
                                 }
                                 .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)
