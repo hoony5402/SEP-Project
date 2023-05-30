@@ -28,9 +28,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +56,11 @@ import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.example.sep.DBHelper
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -69,13 +77,13 @@ fun PostPage_Homepage(navController: NavHostController) {
 
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
-    val title = "Generic Title"
-    val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-    val date = "24/06/2023"
-    val time = "02:05 pm"
-    val location = "Generic Location, Generic Address"
-    val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
-    val type = "Announcements"
+    var title by remember{ mutableStateOf("Generic Title") }
+    var description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
+    var date = "24/06/2023"
+    var time = "02:05 pm"
+    var location = "Generic Location, Generic Address"
+    var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    var type = MainActivity.clicktype.toString()
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
@@ -198,6 +206,24 @@ fun PostPage_Homepage(navController: NavHostController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+            var ref = db.reference.child("posts").child(type).child(MainActivity.clickflag.toString())
+            ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    title = dataSnapshot.child("title").getValue().toString()
+                    description = dataSnapshot.child("description").getValue().toString()
+                    date = dataSnapshot.child("day").getValue().toString()+"/"+
+                            dataSnapshot.child("month").getValue().toString()+"/"+
+                            dataSnapshot.child("year").getValue().toString()
+                    time = dataSnapshot.child("time").getValue().toString()
+                    location = dataSnapshot.child("location").getValue().toString()
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+
+                }
+            })
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
             Text(
@@ -284,7 +310,7 @@ fun PostPage_Homepage(navController: NavHostController) {
             Button(
                 onClick = {
                     var i = MainActivity.clickflag
-                    Toast.makeText(context, "title " + i.toString() + " clicked", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, title + " clicked", Toast.LENGTH_SHORT).show()
                     var database = dbHelper.writableDatabase
 
                     var count = 0

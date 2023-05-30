@@ -86,8 +86,9 @@ class MainActivity : ComponentActivity() {
         }
     }
     companion object {
-        var userdata :UserData = UserData();
-        var clickflag: Int = -1;
+        var userdata :UserData = UserData()
+        var clickflag: Int = -1
+        var clicktype: String = ""
     }
 }
 

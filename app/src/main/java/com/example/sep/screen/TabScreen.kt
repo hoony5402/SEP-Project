@@ -36,9 +36,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -70,6 +72,10 @@ import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import com.example.sep.ScreenMain
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class CardObject {
     public var title: String = "Generic Title"
@@ -98,19 +104,35 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
     val location = content.location
     val image = content.image
 
+    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref = db.reference.child("posts")
+    var data by remember { mutableStateOf<DataSnapshot?>(null) }
+    var num by remember { mutableStateOf(0) }
+    ref.child(type.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            data = dataSnapshot
+            num = dataSnapshot!!.child("number").getValue(Int::class.java)!!
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    })
+
     Column() {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .weight(1f, false)
         ) {
-            for (i in 1..100) {
+            for (i in 0..num-1) {
                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
                 Card(
                     modifier = Modifier
                         .clickable{
                             MainActivity.clickflag = i
+                            MainActivity.clicktype = type
                             navController.navigate(Routes.Post_Homepage.route)
                         }
                         .padding(
@@ -146,7 +168,7 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
                             .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 150).dp)
                     ) {
                         Text(
-                            text = title + " " + i.toString(),
+                            text = data?.child(i.toString())?.child("title")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 20).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
@@ -154,7 +176,10 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
                         )
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                         Text(
-                            text = date + " - " + time,
+                            text = data?.child(i.toString())?.child("day")?.getValue().toString() + "/"+
+                                    data?.child(i.toString())?.child("month")?.getValue().toString()+"/"+
+                                    data?.child(i.toString())?.child("year")?.getValue().toString()+" - "
+                                    + data?.child(i.toString())?.child("time")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -162,7 +187,7 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
                         )
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                         Text(
-                            text = location,
+                            text = data?.child(i.toString())?.child("location")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
