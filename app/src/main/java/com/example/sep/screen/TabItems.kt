@@ -31,7 +31,7 @@ val tabs = listOf(
             TabScreen(
                 content = CardObject(),
                 navController = it,
-                type = "Information"
+                type = "Announcements"
             )
         }
     ),
