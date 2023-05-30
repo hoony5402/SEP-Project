@@ -271,7 +271,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                         .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 500).dp)
                 ) {
                     Text(
-                        text = title + " " + MainActivity.clickflag.toString(),
+                        text = title,
                         textAlign = TextAlign.Left,
                         fontSize = (screenHeight/859.0 * 25).sp,
                         fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
