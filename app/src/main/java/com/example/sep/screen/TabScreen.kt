@@ -125,7 +125,7 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
                 .verticalScroll(rememberScrollState())
                 .weight(1f, false)
         ) {
-            for (i in 0..num-1) {
+            for (i in num-1 downTo 0) {
                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
                 Card(
