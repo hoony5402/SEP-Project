@@ -83,7 +83,9 @@ fun PostPage_Homepage(navController: NavHostController) {
     var time = "02:05 pm"
     var location = "Generic Location, Generic Address"
     var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
-    var type = MainActivity.clicktype.toString()
+
+    var i = MainActivity.clickflag
+    var type = MainActivity.clicktype
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
@@ -309,7 +311,6 @@ fun PostPage_Homepage(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    var i = MainActivity.clickflag
                     Toast.makeText(context, title + " clicked", Toast.LENGTH_SHORT).show()
                     var database = dbHelper.writableDatabase
 

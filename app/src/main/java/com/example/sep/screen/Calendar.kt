@@ -249,13 +249,7 @@ fun CalendarPage(navController: NavHostController) {
             var selection by remember { mutableStateOf(temp_list) }
 
             Column {
-
-                val title = "Generic Title"
-                val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-                val selectDate = selection[0].dayOfMonth.toString() + "/" + "%02d".format(selection[0].monthNumber) + "/" + selection[0].year.toString()
-                val time = "02:05 pm "
-                val location = "Generic Location, Generic Address"
-                val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+                val selectDate = selection[0].dayOfMonth.toString() + "/" + selection[0].monthNumber.toString() + "/" + selection[0].year.toString()
 
                 Column(
                     modifier = Modifier
@@ -274,9 +268,14 @@ fun CalendarPage(navController: NavHostController) {
                     var database = dbHelper.writableDatabase
                     var cursor = database.rawQuery("SELECT * FROM posts;", null)
                     while (cursor.moveToNext()) {
-                        var i = cursor.getString(cursor.getColumnIndex("id"))
+                        var i = cursor.getInt(cursor.getColumnIndex("id"))
                         var type = cursor.getString(cursor.getColumnIndex("type"))
+                        val title = cursor.getString(cursor.getColumnIndex("title"))
+                        val description = cursor.getString(cursor.getColumnIndex("description"))
                         val date = cursor.getString(cursor.getColumnIndex("date"))
+                        val time = cursor.getString(cursor.getColumnIndex("time"))
+                        val location = cursor.getString(cursor.getColumnIndex("location"))
+                        val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
 
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
@@ -285,7 +284,8 @@ fun CalendarPage(navController: NavHostController) {
                         Card(
                             modifier = Modifier
                                 .clickable{
-                                    MainActivity.clickflag = i.toInt()
+                                    MainActivity.clickflag = i
+                                    MainActivity.clicktype = type
                                     navController.navigate(Routes.Post_Calendar.route)
                                 }
                                 .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)

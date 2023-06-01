@@ -69,15 +69,20 @@ fun PostPage_Calendar(navController: NavHostController) {
 
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
-    val title = "Generic Title"
-    val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-    val date = "24/06/2023"
-    val time = "02:05 pm"
-    val location = "Generic Location, Generic Address"
-    val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
-    val type = "Announcements"
+    var i = MainActivity.clickflag
+    var type = MainActivity.clicktype
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
+    var database = dbHelper.writableDatabase
+    var cursor = database.rawQuery("SELECT * FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
+
+    cursor.moveToNext()
+    val title = cursor.getString(cursor.getColumnIndex("title"))
+    val description = cursor.getString(cursor.getColumnIndex("description"))
+    val date = cursor.getString(cursor.getColumnIndex("date"))
+    val time = cursor.getString(cursor.getColumnIndex("time"))
+    val location = cursor.getString(cursor.getColumnIndex("location"))
+    val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -283,7 +288,6 @@ fun PostPage_Calendar(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    var i = MainActivity.clickflag
                     var database = dbHelper.writableDatabase
                     Toast.makeText(context, "title " + i + " deleted", Toast.LENGTH_SHORT).show()
                     database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
