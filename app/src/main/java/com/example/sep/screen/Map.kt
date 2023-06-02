@@ -255,6 +255,12 @@ fun MapPage(navController: NavHostController) {
                     markers = markers + MarkerState(position = latLng)
                 },
             ) {
+                Marker(
+                    state = MarkerState(position = currentLocation!!),
+                    title = "You",
+                    snippet = "Marker"
+                )
+
                 markers.forEach { markerState ->
                     Marker(
                         state = markerState,
