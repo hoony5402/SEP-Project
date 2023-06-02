@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,7 +48,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.sep.R
 import com.example.sep.Routes
-import kotlinx.coroutines.launch
+
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -63,6 +70,12 @@ fun MapPage(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.MAP) }
+
+    //google map
+    val lat = LatLng(35.241615, 128.695587)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(lat, 10f)
+    }
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -178,10 +191,15 @@ fun MapPage(navController: NavHostController) {
             )
         }
     ) { paddingValues ->
-        Column (
-            modifier = Modifier.padding(paddingValues)
+        GoogleMap(
+            modifier = Modifier.padding(paddingValues),
+            cameraPositionState = cameraPositionState
         ) {
-            Text("This is Maps screen")
+            Marker(
+                state = MarkerState(position = lat),
+                title = "lat",
+                snippet = "Marker in lat"
+            )
         }
     }
 }
