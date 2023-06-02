@@ -238,7 +238,7 @@ fun LoginPage(navController: NavHostController) {
                             login_success(email.toString(),context)
                             navController.navigate(Routes.Homepage.route)
                         }else{
-                            Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context,"Login Failed", Toast.LENGTH_SHORT).show()
                         }
                     }
             },
