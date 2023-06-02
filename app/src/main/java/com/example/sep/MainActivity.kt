@@ -2,7 +2,10 @@
 
 package com.example.sep
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
@@ -45,6 +48,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -62,13 +66,25 @@ import com.example.sep.screen.WritePost
 import com.example.sep.screen.TabScreen
 import com.example.sep.ui.theme.SEPTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.MapView
 import com.google.firebase.auth.FirebaseAuth
 
 private var auth: FirebaseAuth? = null
 
 class MainActivity : ComponentActivity() {
+    companion object {
+        private val LOCATION_PERMISSION_REQUEST_CODE = 100
+        var userdata: UserData = UserData()
+        var clickflag: Int = -1
+        var clicktype: String = ""
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        checkLocationPermission()
+
         setContent {
             SEPTheme {
 
@@ -85,10 +101,42 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    companion object {
-        var userdata :UserData = UserData()
-        var clickflag: Int = -1
-        var clicktype: String = ""
+
+    private fun checkLocationPermission() {
+        // 위치 정보 권한이 이미 허용되었는지 확인
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PERMISSION_GRANTED
+        ) {
+            // 권한이 거절되었을 경우 권한 요청
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            // 권한이 이미 허용되어 있는 경우 위치 정보 사용 가능한 상태로 처리
+            // 여기에 위치 정보를 사용하는 기능을 구현하면 됩니다.
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            // 위치 정보 권한에 대한 사용자의 응답을 확인
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // 위치 정보 권한이 허용된 경우 위치 정보 사용 가능한 상태로 처리
+                // 여기에 위치 정보를 사용하는 기능을 구현하면 됩니다.
+            } else {
+                // 위치 정보 권한이 거절된 경우 앱 종료
+                finish()
+            }
+        }
     }
 }
 
