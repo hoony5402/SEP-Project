@@ -3,8 +3,12 @@ package com.example.sep.screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.net.Uri
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -12,11 +16,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +32,8 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -54,11 +62,15 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker.PERMISSION_GRANTED
 import androidx.navigation.NavHostController
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -90,33 +102,11 @@ fun MapPage(navController: NavHostController) {
 
     val selected = remember { mutableStateOf(BottomIcons.MAP) }
 
-    //google map
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-    var currentLocation by remember { mutableStateOf<LatLng?>(null) }
+    var location = LatLng(MainActivity.lat, MainActivity.long)
 
-    LaunchedEffect(Unit) {
-        try {
-            // 위치 정보 권한 확인
-            val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
-            val hasLocationPermission = ActivityCompat.checkSelfPermission(context, locationPermission) == PackageManager.PERMISSION_GRANTED
-
-            if (hasLocationPermission) {
-                // 위치 정보를 가져올 수 있는 경우
-                val location = fusedLocationClient.lastLocation.await()
-                currentLocation = LatLng(location.latitude, location.longitude)
-            } else {
-                // 위치 정보 권한이 없는 경우 권한 요청
-                ActivityCompat.requestPermissions(context as Activity, arrayOf(locationPermission), LOCATION_PERMISSION_REQUEST_CODE)
-            }
-        } catch (e: Exception) {
-            // 위치 정보를 가져오는 도중 오류 발생
-            Toast.makeText(context, "Failed to get current location", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    if (currentLocation != null) {
+    if (location != null) {
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(currentLocation!!, 15f)
+            position = CameraPosition.fromLatLngZoom(location!!, 15f)
         }
 
         Scaffold(
@@ -156,7 +146,8 @@ fun MapPage(navController: NavHostController) {
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                         containerColor = colorResource(id = R.color.black30),
-                        titleContentColor = MaterialTheme.colorScheme.onPrimary
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+
                     ),
                     modifier = Modifier.height(50.dp)
 
@@ -238,29 +229,87 @@ fun MapPage(navController: NavHostController) {
                 )
             }
         ) { paddingValues ->
-            var markers by remember { mutableStateOf(emptyList<MarkerState>()) }
 
-            GoogleMap(
+            Column(
                 modifier = Modifier.padding(paddingValues),
-                cameraPositionState = cameraPositionState,
-                onMapClick = { latLng ->
-                    markers = markers + MarkerState(position = latLng)
-                },
-            ) {
-                Marker(
-                    state = MarkerState(position = currentLocation!!),
-                    title = "You",
-                    snippet = "Marker"
-                )
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                var marker_state by remember {mutableStateOf(MarkerState(position = location!!))}
 
-                markers.forEach { markerState ->
+                GoogleMap(
+                    modifier = Modifier
+                        .width(screenWidth.dp)
+                        .height(screenHeight.dp - (screenHeight/859.0 * 200).dp)
+                        .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp)
+                        .clip(RoundedCornerShape((screenHeight/859.0 * 20).dp)),
+                    cameraPositionState = cameraPositionState,
+                    onMapClick = { latLng ->
+                        marker_state = MarkerState(position = latLng)
+                    },
+                ) {
                     Marker(
-                        state = markerState,
-                        title = "Marker",
+                        state = MarkerState(position = location!!),
+                        title = "You",
+                        snippet = "Marker"
+                    )
+
+                    Marker(
+                        state = marker_state,
+                        title = "You",
                         snippet = "Marker"
                     )
                 }
+
+                Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+
+                Button(
+                    onClick = {
+                              context.openMap(location.latitude, location.longitude)
+                    },
+                    shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 300).dp)
+                        .height((screenHeight / 859.0 * 50).dp)
+                ) {
+                    Text(
+                        text = "open in maps",
+                        fontSize = (screenHeight/859.0 * 20).sp,
+                        color = colorResource(R.color.white),
+                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                    )
+                }
             }
+
+
+
+
         }
     }
+}
+
+fun Context.openMap(latitude: Double, longitude: Double) {
+
+    //geo:0,0?q=-33.8666,151.1957(Google+Sydney)
+
+    var area = "geo:0,0?q=" + latitude.toString() + "," + longitude.toString()
+
+    // Creates an Intent that will load a map of San Francisco
+    val gmmIntentUri = Uri.parse(area)
+    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+    startActivity(mapIntent)
+
+//    try {
+//        val intent = Intent(Intent.ACTION_SEND)
+//        intent.type = "vnd.android.cursor.item/email" // or "message/rfc822"
+//        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
+//        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+//        startActivity(intent)
+//    } catch (e: ActivityNotFoundException) {
+//        // TODO: Handle case where no email app is available
+//    } catch (t: Throwable) {
+//        // TODO: Handle potential other type of exceptions
+//    }
 }

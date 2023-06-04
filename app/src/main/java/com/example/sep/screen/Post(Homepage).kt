@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,9 +44,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -82,12 +86,31 @@ fun PostPage_Homepage(navController: NavHostController) {
     var date = "24/06/2023"
     var time = "02:05 pm"
     var location = "Generic Location, Generic Address"
-    var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    var image = ""
 
     var i = MainActivity.clickflag
     var type = MainActivity.clicktype
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
+
+    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref = db.reference.child("posts").child(type).child(MainActivity.clickflag.toString())
+    ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            title = dataSnapshot.child("title").getValue().toString()
+            description = dataSnapshot.child("description").getValue().toString()
+            date = dataSnapshot.child("day").getValue().toString()+"/"+
+                    dataSnapshot.child("month").getValue().toString()+"/"+
+                    dataSnapshot.child("year").getValue().toString()
+            time = dataSnapshot.child("time").getValue().toString()
+            location = dataSnapshot.child("location").getValue().toString()
+            image = dataSnapshot.child("image").getValue().toString()
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    })
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -200,25 +223,9 @@ fun PostPage_Homepage(navController: NavHostController) {
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-            var ref = db.reference.child("posts").child(type).child(MainActivity.clickflag.toString())
-            ref.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    title = dataSnapshot.child("title").getValue().toString()
-                    description = dataSnapshot.child("description").getValue().toString()
-                    date = dataSnapshot.child("day").getValue().toString()+"/"+
-                            dataSnapshot.child("month").getValue().toString()+"/"+
-                            dataSnapshot.child("year").getValue().toString()
-                    time = dataSnapshot.child("time").getValue().toString()
-                    location = dataSnapshot.child("location").getValue().toString()
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-
-                }
-            })
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+
+            title += ""
 
             Text(
                 text = type,
@@ -289,12 +296,24 @@ fun PostPage_Homepage(navController: NavHostController) {
                         color = colorResource(R.color.white)
                     )
                     Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-                    Text(
-                        text = location,
-                        textAlign = TextAlign.Left,
-                        fontSize = (screenHeight/859.0 * 18).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white)
+                    ClickableText(
+                        text = AnnotatedString(location),
+                        onClick = {
+                            val split = location.split(",")
+
+                            var lat = split[0].toDouble()
+                            var long = split[1].toDouble()
+                            Toast.makeText(context, lat.toString() + ", " + long.toString(), Toast.LENGTH_SHORT).show()
+                            MainActivity.lat = lat
+                            MainActivity.long = long
+                            navController.navigate(Routes.Map.route)
+                        },
+                        style = TextStyle(
+                            fontSize = (screenHeight/859.0 * 18).sp,
+                            textDecoration = TextDecoration.Underline,
+                            color = colorResource(R.color.white),
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                        )
                     )
                 }
             }

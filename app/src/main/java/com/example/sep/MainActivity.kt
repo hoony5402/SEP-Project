@@ -3,6 +3,7 @@
 package com.example.sep
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -31,6 +32,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +58,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.sep.screen.CalendarPage
 import com.example.sep.screen.CardObject
 import com.example.sep.screen.HomepagePage
+import com.example.sep.screen.LOCATION_PERMISSION_REQUEST_CODE
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
 import com.example.sep.screen.MenuPage
@@ -69,7 +72,9 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.tasks.await
 
 private var auth: FirebaseAuth? = null
 
@@ -79,6 +84,8 @@ class MainActivity : ComponentActivity() {
         var userdata: UserData = UserData()
         var clickflag: Int = -1
         var clicktype: String = ""
+        var lat: Double = 0.0
+        var long: Double = 0.0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,6 +152,29 @@ fun ScreenMain(){
     val navController = rememberNavController()
 
     val context = LocalContext.current
+
+    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+
+    LaunchedEffect(Unit) {
+        try {
+            // 위치 정보 권한 확인
+            val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+            val hasLocationPermission = ActivityCompat.checkSelfPermission(context, locationPermission) == PERMISSION_GRANTED
+
+            if (hasLocationPermission) {
+                // 위치 정보를 가져올 수 있는 경우
+                val location = fusedLocationClient.lastLocation.await()
+                MainActivity.lat = location.latitude
+                MainActivity.long = location.longitude
+            } else {
+                // 위치 정보 권한이 없는 경우 권한 요청
+                ActivityCompat.requestPermissions(context as Activity, arrayOf(locationPermission), LOCATION_PERMISSION_REQUEST_CODE)
+            }
+        } catch (e: Exception) {
+            // 위치 정보를 가져오는 도중 오류 발생
+            Toast.makeText(context, "Failed to get current location", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(colorResource(R.color.white))

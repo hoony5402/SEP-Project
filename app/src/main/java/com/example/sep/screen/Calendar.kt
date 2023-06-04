@@ -122,6 +122,8 @@ fun CalendarPage(navController: NavHostController) {
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
+
+
     Scaffold(
         containerColor = colorResource(R.color.white),
         topBar = {
@@ -431,8 +433,12 @@ private fun MonthHeader(monthState: MonthState) {
 
 @Composable
 private fun WeekHeader(daysOfWeek: List<DayOfWeek>) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     Row(
-        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp)
+        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, (screenHeight/859.0 * 20).dp)
     ){
         daysOfWeek.forEach { dayOfWeek ->
             Text(
@@ -449,12 +455,16 @@ private fun WeekHeader(daysOfWeek: List<DayOfWeek>) {
 
 @Composable
 private fun MonthContainer(content: @Composable (PaddingValues) -> Unit) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     Card(
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, colorResource(R.color.color1)),
         content = { content(PaddingValues(4.dp)) },
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.transparent)),
-        modifier = Modifier.width(410.dp).padding(10.dp, 0.dp, 10.dp, 0.dp),
+        modifier = Modifier.width((screenHeight/859.0 * 410).dp).padding((screenHeight/859.0 * 10).dp, 0.dp, (screenHeight/859.0 * 10).dp, 0.dp),
     )
 }
 
@@ -462,6 +472,10 @@ private fun MonthContainer(content: @Composable (PaddingValues) -> Unit) {
 fun BoxScope.DayContent(
     dayState: KotlinDayState<DynamicSelectionState>,
 ) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     val isSelected = dayState.selectionState.isDateSelected(dayState.date)
 
     val background = if (isSelected) colorResource(R.color.black30) else colorResource(R.color.transparent)
@@ -470,10 +484,10 @@ fun BoxScope.DayContent(
 
     Box (
         modifier = Modifier
-            .padding(10.dp, 5.dp, 10.dp, 5.dp)
-            .width(60.dp)
-            .height(40.dp)
-            .clip(RoundedCornerShape(10.dp))
+            .padding((screenHeight/859.0 * 10).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 10).dp, (screenHeight/859.0 * 5).dp)
+            .width((screenHeight/859.0 * 60).dp)
+            .height((screenHeight/859.0 * 40).dp)
+            .clip(RoundedCornerShape((screenHeight/859.0 * 10).dp))
             .background(color = background)
     )
     {
@@ -484,7 +498,7 @@ fun BoxScope.DayContent(
                 .clickable {
                     dayState.selectionState.onDateSelected(dayState.date)
                 }
-                .padding(0.dp, 5.dp, 0.dp, 0.dp),
+                .padding(0.dp, (screenHeight/859.0 * 5).dp, 0.dp, 0.dp),
             color = textcolour,
             textAlign = TextAlign.Center,
             fontFamily = FontFamily(Font(R.font.sf_pro_text)),
