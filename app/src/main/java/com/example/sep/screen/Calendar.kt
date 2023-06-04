@@ -138,8 +138,6 @@ fun CalendarPage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -192,8 +190,6 @@ fun CalendarPage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.CALENDAR
-                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -209,8 +205,6 @@ fun CalendarPage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.HOME
-                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -226,8 +220,6 @@ fun CalendarPage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.MAP
-                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
