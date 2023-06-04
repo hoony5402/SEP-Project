@@ -37,9 +37,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -82,6 +86,8 @@ fun HomepagePage(navController: NavHostController) {
 
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
+    var post_number = "-1"
+
     Scaffold(
         containerColor = colorResource(R.color.white),
         topBar = {
@@ -96,8 +102,6 @@ fun HomepagePage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                            Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -143,8 +147,6 @@ fun HomepagePage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                             selected.value = BottomIcons.CALENDAR
-                            Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -160,8 +162,6 @@ fun HomepagePage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                             selected.value = BottomIcons.HOME
-                            Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -177,8 +177,6 @@ fun HomepagePage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                             selected.value = BottomIcons.MAP
-                            Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -222,7 +220,7 @@ fun HomepagePage(navController: NavHostController) {
                         selectedContentColor = colorResource(R.color.color1),
                         unselectedContentColor = colorResource(R.color.black50),
                         text = { Text(text = item.title,
-                            style = TextStyle(fontSize = (screenHeight/859.0 * 13).sp),
+                            fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.color1)
                         ) },
@@ -234,7 +232,7 @@ fun HomepagePage(navController: NavHostController) {
                 pageCount = tabs.size,
                 state = pagerState
             ) {
-                tabs[pagerState.currentPage].screen()
+                tabs[pagerState.currentPage].screen(navController)
             }
         }
     }

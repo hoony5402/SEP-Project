@@ -3,6 +3,7 @@ package com.example.sep.screen
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,9 +36,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -57,27 +61,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.sep.MainActivity
+import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
+import com.example.sep.ScreenMain
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class CardObject {
     public var title: String = "Generic Title"
     public var description: String = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-    public var date: String = "24/06/2023 "
-    public var time: String = "02:05 pm "
+    public var date: String = "24/06/2023"
+    public var time: String = "02:05 pm"
     public var location: String = "Generic Location, Generic Address"
-    public var type: String = "Announcements"
+    //public var type: String = "Announcements"
     public var image: String = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TabScreen(content: CardObject) {
+fun TabScreen(content: CardObject, navController: NavController, type: String){
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -90,7 +102,22 @@ fun TabScreen(content: CardObject) {
     val date = content.date
     val time = content.time
     val location = content.location
-    val image = content.image
+    var image = content.image
+
+    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    var ref = db.reference.child("posts")
+    var data by remember { mutableStateOf<DataSnapshot?>(null) }
+    var num by remember { mutableStateOf(0) }
+    ref.child(type.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            data = dataSnapshot
+            num = dataSnapshot!!.child("number").getValue(Int::class.java)!!
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+
+        }
+    })
 
     Column() {
         Column(
@@ -98,20 +125,30 @@ fun TabScreen(content: CardObject) {
                 .verticalScroll(rememberScrollState())
                 .weight(1f, false)
         ) {
-            for (i in 1..100) {
+            for (i in num-1 downTo 0) {
                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
                 Card(
                     modifier = Modifier
-                        .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                        .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 300).dp)
+                        .clickable{
+                            MainActivity.clickflag = i
+                            MainActivity.clicktype = type
+                            navController.navigate(Routes.Post_Homepage.route)
+                        }
+                        .padding(
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 5).dp,
+                            (screenHeight / 859.0 * 20).dp,
+                            0.dp
+                        )
+                        .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 150).dp)
                         .align(Alignment.CenterHorizontally)
-                        .clip(RoundedCornerShape((screenHeight/859.0 * 25).dp))
+                        .clip(RoundedCornerShape((screenHeight / 859.0 * 25).dp))
                         .paint(
                             painter = rememberAsyncImagePainter(
                                 model = ImageRequest
                                     .Builder(LocalContext.current)
-                                    .data(image)
+                                    .data(data?.child(i.toString())?.child("image")?.getValue().toString())
                                     .scale(Scale.FIT)
                                     .build()
                             ),
@@ -122,11 +159,16 @@ fun TabScreen(content: CardObject) {
                 ) {
                     Column(
                         modifier = Modifier
-                            .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                            .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 300).dp)
+                            .padding(
+                                (screenHeight / 859.0 * 20).dp,
+                                (screenHeight / 859.0 * 20).dp,
+                                (screenHeight / 859.0 * 20).dp,
+                                0.dp
+                            )
+                            .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 150).dp)
                     ) {
                         Text(
-                            text = title + " " + i.toString(),
+                            text = data?.child(i.toString())?.child("title")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 20).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
@@ -134,7 +176,10 @@ fun TabScreen(content: CardObject) {
                         )
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                         Text(
-                            text = description,
+                            text = data?.child(i.toString())?.child("day")?.getValue().toString() + "/"+
+                                    data?.child(i.toString())?.child("month")?.getValue().toString()+"/"+
+                                    data?.child(i.toString())?.child("year")?.getValue().toString()+" - "
+                                    + data?.child(i.toString())?.child("time")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -142,40 +187,12 @@ fun TabScreen(content: CardObject) {
                         )
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                         Text(
-                            text = date + " - " + time,
+                            text = data?.child(i.toString())?.child("location")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white)
                         )
-                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
-                        Text(
-                            text = location,
-                            textAlign = TextAlign.Left,
-                            fontSize = (screenHeight/859.0 * 12).sp,
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                            color = colorResource(R.color.white)
-                        )
-                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 35).dp))
-                        Button(
-                            onClick = {
-                                Toast.makeText(context, "title " + i + " clicked", Toast.LENGTH_SHORT).show()
-                            },
-                            shape = RoundedCornerShape((screenHeight/859.0 * 10).dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
-                            modifier = Modifier
-                                .width((screenWidth / 411.0 * 150).dp)
-                                .height((screenHeight / 859.0 * 40).dp)
-                                .align(Alignment.CenterHorizontally)
-                        ) {
-                            Text(
-                                text = "add to calendar",
-                                fontSize = (screenHeight/859.0 * 10).sp,
-                                color = colorResource(R.color.white),
-                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                textAlign = TextAlign.Center
-                            )
-                        }
                     }
                 }
             }

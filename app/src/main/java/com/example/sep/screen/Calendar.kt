@@ -59,11 +59,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -79,6 +81,8 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
+import com.example.sep.MainActivity
+import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
@@ -115,6 +119,10 @@ fun CalendarPage(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.CALENDAR) }
+
+    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
+
+
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -238,21 +246,15 @@ fun CalendarPage(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column (
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val temp_list: List<LocalDate> = listOf(LocalDate.now())
 
             var selection by remember { mutableStateOf(temp_list) }
 
             Column {
-
-
-                val title = "Generic Title"
-                val description = "Generic description for the generic title. Generic description for the generic title. Generic description for the generic title."
-                val date = selection[0].dayOfMonth.toString() + "/" + selection[0].monthNumber.toString() + "/" + selection[0].year.toString()
-                val time = "02:05 pm "
-                val location = "Generic Location, Generic Address"
-                val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+                val selectDate = selection[0].dayOfMonth.toString() + "/" + selection[0].monthNumber.toString() + "/" + selection[0].year.toString()
 
                 Column(
                     modifier = Modifier
@@ -266,13 +268,36 @@ fun CalendarPage(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    for (i in 1..100) {
+                    var count  = 0
+
+                    //===================================================================
+                    //for (i in 1..100) {
+                    var database = dbHelper.writableDatabase
+                    var cursor = database.rawQuery("SELECT * FROM posts;", null)
+                    while (cursor.moveToNext()) {
+                        var i = cursor.getInt(cursor.getColumnIndex("id"))
+                        var type = cursor.getString(cursor.getColumnIndex("type"))
+                        val title = cursor.getString(cursor.getColumnIndex("title"))
+                        val description = cursor.getString(cursor.getColumnIndex("description"))
+                        val date = cursor.getString(cursor.getColumnIndex("date"))
+                        val time = cursor.getString(cursor.getColumnIndex("time"))
+                        val location = cursor.getString(cursor.getColumnIndex("location"))
+                        val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+
+                        if (selectDate != date) continue
+
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
 
+                        count += 1
                         Card(
                             modifier = Modifier
-                                .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 0).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                                .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 280).dp)
+                                .clickable{
+                                    MainActivity.clickflag = i
+                                    MainActivity.clicktype = type
+                                    navController.navigate(Routes.Post_Calendar.route)
+                                }
+                                .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)
+                                .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
                                 .align(Alignment.CenterHorizontally)
                                 .clip(RoundedCornerShape((screenHeight/859.0 * 25).dp))
                                 .paint(
@@ -290,8 +315,8 @@ fun CalendarPage(navController: NavHostController) {
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 10).dp, (screenHeight/859.0 * 20).dp, 0.dp)
-                                    .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 280).dp)
+                                    .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, 0.dp)
+                                    .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
                             ) {
                                 Text(
                                     text = title + " " + i.toString(),
@@ -302,15 +327,7 @@ fun CalendarPage(navController: NavHostController) {
                                 )
                                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                                 Text(
-                                    text = description,
-                                    textAlign = TextAlign.Left,
-                                    fontSize = (screenHeight/859.0 * 12).sp,
-                                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                    color = colorResource(R.color.white)
-                                )
-                                Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
-                                Text(
-                                    text = date + " - " + time,
+                                    text = selectDate + " - " + time,
                                     textAlign = TextAlign.Left,
                                     fontSize = (screenHeight/859.0 * 12).sp,
                                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -324,27 +341,35 @@ fun CalendarPage(navController: NavHostController) {
                                     fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                                     color = colorResource(R.color.white)
                                 )
-                                Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
-                                Button(
-                                    onClick = {
-                                        Toast.makeText(context, "title " + i + " clicked", Toast.LENGTH_SHORT).show()
-                                    },
-                                    shape = RoundedCornerShape((screenHeight/859.0 * 10).dp),
-                                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
-                                    modifier = Modifier
-                                        .width((screenWidth / 411.0 * 170).dp)
-                                        .height((screenHeight / 859.0 * 40).dp)
-                                        .align(Alignment.CenterHorizontally)
-                                ) {
-                                    Text(
-                                        text = "remove from calendar",
-                                        fontSize = (screenHeight/859.0 * 10).sp,
-                                        color = colorResource(R.color.white),
-                                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
                             }
+                        }
+                    }
+
+                    if (count == 0)
+                    {
+                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+
+                        Card(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            colors = CardDefaults.cardColors(containerColor = colorResource(R.color.white))
+                        )
+                        {
+                            Text(
+                                text = "No posts to show!",
+                                textAlign = TextAlign.Center,
+                                fontSize = (screenHeight/859.0 * 25).sp,
+                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                                color = colorResource(R.color.black),
+                                modifier = Modifier.align(CenterHorizontally)
+                            )
+                            Text(
+                                text = "You can add posts from the homepage",
+                                textAlign = TextAlign.Center,
+                                fontSize = (screenHeight/859.0 * 15).sp,
+                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                                color = colorResource(R.color.black),
+                                modifier = Modifier.align(CenterHorizontally)
+                            )
                         }
                     }
                 }
@@ -408,8 +433,12 @@ private fun MonthHeader(monthState: MonthState) {
 
 @Composable
 private fun WeekHeader(daysOfWeek: List<DayOfWeek>) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     Row(
-        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, 20.dp)
+        modifier = Modifier.padding(0.dp, 0.dp, 0.dp, (screenHeight/859.0 * 20).dp)
     ){
         daysOfWeek.forEach { dayOfWeek ->
             Text(
@@ -426,12 +455,16 @@ private fun WeekHeader(daysOfWeek: List<DayOfWeek>) {
 
 @Composable
 private fun MonthContainer(content: @Composable (PaddingValues) -> Unit) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     Card(
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, colorResource(R.color.color1)),
         content = { content(PaddingValues(4.dp)) },
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.transparent)),
-        modifier = Modifier.width(410.dp).padding(10.dp, 0.dp, 10.dp, 0.dp),
+        modifier = Modifier.width((screenHeight/859.0 * 410).dp).padding((screenHeight/859.0 * 10).dp, 0.dp, (screenHeight/859.0 * 10).dp, 0.dp),
     )
 }
 
@@ -439,6 +472,10 @@ private fun MonthContainer(content: @Composable (PaddingValues) -> Unit) {
 fun BoxScope.DayContent(
     dayState: KotlinDayState<DynamicSelectionState>,
 ) {
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp
+
     val isSelected = dayState.selectionState.isDateSelected(dayState.date)
 
     val background = if (isSelected) colorResource(R.color.black30) else colorResource(R.color.transparent)
@@ -447,9 +484,11 @@ fun BoxScope.DayContent(
 
     Box (
         modifier = Modifier
-            .width(100.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .background(background)
+            .padding((screenHeight/859.0 * 10).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 10).dp, (screenHeight/859.0 * 5).dp)
+            .width((screenHeight/859.0 * 60).dp)
+            .height((screenHeight/859.0 * 40).dp)
+            .clip(RoundedCornerShape((screenHeight/859.0 * 10).dp))
+            .background(color = background)
     )
     {
         Text(
@@ -459,7 +498,7 @@ fun BoxScope.DayContent(
                 .clickable {
                     dayState.selectionState.onDateSelected(dayState.date)
                 }
-                .padding(0.dp, 15.dp, 0.dp, 0.dp),
+                .padding(0.dp, (screenHeight/859.0 * 5).dp, 0.dp, 0.dp),
             color = textcolour,
             textAlign = TextAlign.Center,
             fontFamily = FontFamily(Font(R.font.sf_pro_text)),
