@@ -102,8 +102,6 @@ fun HomepagePage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                            Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -149,8 +147,6 @@ fun HomepagePage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                             selected.value = BottomIcons.CALENDAR
-                            Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -166,8 +162,6 @@ fun HomepagePage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                             selected.value = BottomIcons.HOME
-                            Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -183,8 +177,6 @@ fun HomepagePage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                             selected.value = BottomIcons.MAP
-                            Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                .show()
                             navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -228,7 +220,7 @@ fun HomepagePage(navController: NavHostController) {
                         selectedContentColor = colorResource(R.color.color1),
                         unselectedContentColor = colorResource(R.color.black50),
                         text = { Text(text = item.title,
-                            style = TextStyle(fontSize = (screenHeight/859.0 * 13).sp),
+                            fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.color1)
                         ) },
@@ -241,15 +233,6 @@ fun HomepagePage(navController: NavHostController) {
                 state = pagerState
             ) {
                 tabs[pagerState.currentPage].screen(navController)
-
-                var clickpost by rememberSaveable { mutableStateOf(MainActivity.clickflag) }
-
-                if (clickpost != -1)
-                {
-                    Toast.makeText(context, "I will now route to post number " + clickpost, Toast.LENGTH_SHORT).show()
-                }
-
-//                Toast.makeText(context, "I will now route to post number " + clickpost, Toast.LENGTH_SHORT).show()
             }
         }
     }

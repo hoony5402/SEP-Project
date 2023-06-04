@@ -59,11 +59,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -242,7 +244,8 @@ fun CalendarPage(navController: NavHostController) {
         }
     ) { paddingValues ->
         Column (
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val temp_list: List<LocalDate> = listOf(LocalDate.now())
 
@@ -263,6 +266,8 @@ fun CalendarPage(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    var count  = 0
+
                     //===================================================================
                     //for (i in 1..100) {
                     var database = dbHelper.writableDatabase
@@ -277,10 +282,11 @@ fun CalendarPage(navController: NavHostController) {
                         val location = cursor.getString(cursor.getColumnIndex("location"))
                         val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
 
-                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-
                         if (selectDate != date) continue
 
+                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+
+                        count += 1
                         Card(
                             modifier = Modifier
                                 .clickable{
@@ -334,6 +340,34 @@ fun CalendarPage(navController: NavHostController) {
                                     color = colorResource(R.color.white)
                                 )
                             }
+                        }
+                    }
+
+                    if (count == 0)
+                    {
+                        Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+
+                        Card(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            colors = CardDefaults.cardColors(containerColor = colorResource(R.color.white))
+                        )
+                        {
+                            Text(
+                                text = "No posts to show!",
+                                textAlign = TextAlign.Center,
+                                fontSize = (screenHeight/859.0 * 25).sp,
+                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                                color = colorResource(R.color.black),
+                                modifier = Modifier.align(CenterHorizontally)
+                            )
+                            Text(
+                                text = "You can add posts from the homepage",
+                                textAlign = TextAlign.Center,
+                                fontSize = (screenHeight/859.0 * 15).sp,
+                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                                color = colorResource(R.color.black),
+                                modifier = Modifier.align(CenterHorizontally)
+                            )
                         }
                     }
                 }
@@ -436,9 +470,11 @@ fun BoxScope.DayContent(
 
     Box (
         modifier = Modifier
-            .width(100.dp)
+            .padding(10.dp, 5.dp, 10.dp, 5.dp)
+            .width(60.dp)
+            .height(40.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(background)
+            .background(color = background)
     )
     {
         Text(
@@ -448,7 +484,7 @@ fun BoxScope.DayContent(
                 .clickable {
                     dayState.selectionState.onDateSelected(dayState.date)
                 }
-                .padding(0.dp, 15.dp, 0.dp, 0.dp),
+                .padding(0.dp, 5.dp, 0.dp, 0.dp),
             color = textcolour,
             textAlign = TextAlign.Center,
             fontFamily = FontFamily(Font(R.font.sf_pro_text)),

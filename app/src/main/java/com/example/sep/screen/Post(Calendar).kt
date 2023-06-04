@@ -98,8 +98,6 @@ fun PostPage_Calendar(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -145,8 +143,6 @@ fun PostPage_Calendar(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.CALENDAR
-                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -162,8 +158,6 @@ fun PostPage_Calendar(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.HOME
-                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -179,8 +173,6 @@ fun PostPage_Calendar(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.MAP
-                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -289,7 +281,7 @@ fun PostPage_Calendar(navController: NavHostController) {
             Button(
                 onClick = {
                     var database = dbHelper.writableDatabase
-                    Toast.makeText(context, "title " + i + " deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "post removed successfully!", Toast.LENGTH_SHORT).show()
                     database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
                     navController.navigate(Routes.Calendar.route)
                 },

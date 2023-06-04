@@ -103,8 +103,6 @@ fun PostPage_Homepage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -150,8 +148,6 @@ fun PostPage_Homepage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.CALENDAR
-                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -167,8 +163,6 @@ fun PostPage_Homepage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.HOME
-                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -184,8 +178,6 @@ fun PostPage_Homepage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.MAP
-                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -311,15 +303,17 @@ fun PostPage_Homepage(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    Toast.makeText(context, title + " clicked", Toast.LENGTH_SHORT).show()
                     var database = dbHelper.writableDatabase
 
                     var count = 0
                     var cursor = database.rawQuery("SELECT count(*) FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
                     if (cursor.moveToFirst()) count = cursor.getInt(0)
 
-                    if (count == 0) database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}');")
-                    else Toast.makeText(context, "Already Exist", Toast.LENGTH_SHORT).show()
+                    if (count == 0){
+                        database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}');")
+                        Toast.makeText(context, "post added successfully", Toast.LENGTH_SHORT).show()
+                    }
+                    else Toast.makeText(context, "post is already added", Toast.LENGTH_SHORT).show()
                 },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
