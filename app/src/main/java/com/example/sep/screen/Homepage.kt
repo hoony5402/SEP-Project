@@ -219,12 +219,10 @@ fun HomepagePage(navController: NavHostController) {
                         selected = index == pagerState.currentPage,
                         selectedContentColor = colorResource(R.color.color1),
                         unselectedContentColor = colorResource(R.color.black50),
-                        text = {
-                            Text(
-                                text = item.title,
-                                fontSize = (screenHeight/859.0 * 12).sp,
-                                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                                color = colorResource(R.color.color1)
+                        text = { Text(text = item.title,
+                            fontSize = (screenHeight/859.0 * 12).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.color1)
                         ) },
                         onClick = { coroutineScope.launch { pagerState.animateScrollToPage(index) } }
                     )

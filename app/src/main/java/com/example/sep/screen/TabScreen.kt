@@ -102,7 +102,7 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
     val date = content.date
     val time = content.time
     val location = content.location
-    val image = content.image
+    var image = content.image
 
     var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
     var ref = db.reference.child("posts")
@@ -148,7 +148,7 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
                             painter = rememberAsyncImagePainter(
                                 model = ImageRequest
                                     .Builder(LocalContext.current)
-                                    .data(image)
+                                    .data(data?.child(i.toString())?.child("image")?.getValue().toString())
                                     .scale(Scale.FIT)
                                     .build()
                             ),

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,9 +41,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -266,12 +270,24 @@ fun PostPage_Calendar(navController: NavHostController) {
                         color = colorResource(R.color.white)
                     )
                     Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-                    Text(
-                        text = location,
-                        textAlign = TextAlign.Left,
-                        fontSize = (screenHeight/859.0 * 18).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white)
+                    ClickableText(
+                        text = AnnotatedString(location),
+                        onClick = {
+                            val split = location.split(",")
+
+                            var lat = split[0].toDouble()
+                            var long = split[1].toDouble()
+                            Toast.makeText(context, lat.toString() + ", " + long.toString(), Toast.LENGTH_SHORT).show()
+                            MainActivity.lat = lat
+                            MainActivity.long = long
+                            navController.navigate(Routes.Map.route)
+                        },
+                        style = TextStyle(
+                            fontSize = (screenHeight/859.0 * 18).sp,
+                            textDecoration = TextDecoration.Underline,
+                            color = colorResource(R.color.white),
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                        )
                     )
                 }
             }
@@ -281,7 +297,7 @@ fun PostPage_Calendar(navController: NavHostController) {
             Button(
                 onClick = {
                     var database = dbHelper.writableDatabase
-                    Toast.makeText(context, "title " + i + " deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "post removed successfully!", Toast.LENGTH_SHORT).show()
                     database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
                     navController.navigate(Routes.Calendar.route)
                 },

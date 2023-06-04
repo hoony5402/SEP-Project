@@ -79,6 +79,8 @@ fun MenuPage(navController: NavHostController) {
         username = MainActivity.userdata.username.toString()
         email = MainActivity.userdata.useremail.toString()
         studentID = MainActivity.userdata.studentid.toString()
+    }else{
+        navController.navigate(Routes.Login.route)
     }
 
 

@@ -130,7 +130,7 @@ fun WritePost(navController: NavHostController) {
 
     // Fetching current year, month and day
     mYear = mCalendar.get(Calendar.YEAR)
-    mMonth = mCalendar.get(Calendar.MONTH)
+    mMonth = mCalendar.get(Calendar.MONTH)+1
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
 
     mCalendar.time = Date()
