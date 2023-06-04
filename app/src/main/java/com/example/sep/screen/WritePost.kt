@@ -142,6 +142,7 @@ fun WritePost(navController: NavHostController) {
     var day: String = ""
     var month: String = ""
     var year: String = ""
+
     // Declaring DatePickerDialog and setting
     // initial values as current values (present year, month and day)
     val mDatePickerDialog = DatePickerDialog(
