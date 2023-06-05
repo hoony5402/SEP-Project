@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.annotation.SuppressLint
 import android.graphics.Paint
 import android.icu.lang.UCharacter.DecompositionType.NARROW
 import android.widget.Toast
@@ -105,6 +106,7 @@ import java.time.DayOfWeek
 import java.time.Year
 import java.util.Locale
 
+@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CalendarPage(navController: NavHostController) {

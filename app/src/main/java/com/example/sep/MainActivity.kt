@@ -86,6 +86,8 @@ class MainActivity : ComponentActivity() {
         var clicktype: String = ""
         var lat: Double = 0.0
         var long: Double = 0.0
+        var selectedlat: Double = 0.0
+        var selectedlong: Double = 0.0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

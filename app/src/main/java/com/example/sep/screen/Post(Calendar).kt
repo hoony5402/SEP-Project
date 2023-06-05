@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -58,6 +59,7 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.example.sep.DBHelper
 
+@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PostPage_Calendar(navController: NavHostController) {

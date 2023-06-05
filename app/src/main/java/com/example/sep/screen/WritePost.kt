@@ -110,7 +110,7 @@ fun WritePost(navController: NavHostController) {
     var title by remember{mutableStateOf("")}
     var description by remember{mutableStateOf("")}
     var time by remember{mutableStateOf("")}
-    var location by remember{mutableStateOf("")}
+    var location by remember{mutableStateOf(MainActivity.selectedlat.toString() + "," + MainActivity.selectedlong.toString())}
     var type by remember{mutableStateOf("")}
     var image by remember{mutableStateOf("")}
 

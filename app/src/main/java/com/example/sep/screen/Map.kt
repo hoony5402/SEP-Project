@@ -246,6 +246,8 @@ fun MapPage(navController: NavHostController) {
                     cameraPositionState = cameraPositionState,
                     onMapClick = { latLng ->
                         marker_state = MarkerState(position = latLng)
+                        MainActivity.selectedlat = latLng.latitude
+                        MainActivity.selectedlong = latLng.longitude
                     },
                 ) {
                     Marker(
@@ -256,7 +258,7 @@ fun MapPage(navController: NavHostController) {
 
                     Marker(
                         state = marker_state,
-                        title = "You",
+                        title = "Selected",
                         snippet = "Marker"
                     )
                 }
