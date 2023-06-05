@@ -122,6 +122,9 @@ fun CalendarPage(navController: NavHostController) {
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
+    MainActivity.locName = ""
+    MainActivity.lat = 0.0
+    MainActivity.long = 0.0
 
 
     Scaffold(

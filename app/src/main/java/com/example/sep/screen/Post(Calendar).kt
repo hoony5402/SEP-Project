@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -58,6 +59,7 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.example.sep.DBHelper
 
+@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PostPage_Calendar(navController: NavHostController) {
@@ -87,6 +89,10 @@ fun PostPage_Calendar(navController: NavHostController) {
     val time = cursor.getString(cursor.getColumnIndex("time"))
     val location = cursor.getString(cursor.getColumnIndex("location"))
     val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+
+    MainActivity.locName = ""
+    MainActivity.lat = 0.0
+    MainActivity.long = 0.0
 
     Scaffold(
         containerColor = colorResource(R.color.white),

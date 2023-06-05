@@ -187,7 +187,7 @@ fun TabScreen(content: CardObject, navController: NavController, type: String){
                         )
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
                         Text(
-                            text = data?.child(i.toString())?.child("location")?.getValue().toString(),
+                            text = data?.child(i.toString())?.child("locationName")?.getValue().toString(),
                             textAlign = TextAlign.Left,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
