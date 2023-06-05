@@ -219,7 +219,7 @@ fun LoginPage(navController: NavHostController) {
                                 login_success(email.toString(),context)
                                 navController.navigate(Routes.Homepage.route)
                             }else{
-                                Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,"Login Failed " + email.toString(), Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
@@ -230,17 +230,21 @@ fun LoginPage(navController: NavHostController) {
 
         Button(
             onClick = {
-                auth.signInWithEmailAndPassword(email.toString(),password.toString())
-                    .addOnCompleteListener{task->
-                        if(task.isSuccessful){
-                            Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
-                            user = auth.currentUser
-                            login_success(email.toString(),context)
-                            navController.navigate(Routes.Homepage.route)
-                        }else{
-                            Toast.makeText(context,"Login Failed", Toast.LENGTH_SHORT).show()
+                if(email.isEmpty() || password.isEmpty()){
+                    Toast.makeText(context, "Please write email or pwd",Toast.LENGTH_SHORT).show()
+                }else {
+                    auth.signInWithEmailAndPassword(email.toString(), password.toString())
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(context, "Login Success", Toast.LENGTH_SHORT).show()
+                                user = auth.currentUser
+                                login_success(email.toString(), context)
+                                navController.navigate(Routes.Homepage.route)
+                            } else {
+                                Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }
+                }
             },
             shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
             colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
