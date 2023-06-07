@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.DBHelper
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
@@ -196,6 +197,11 @@ fun MenuPage(navController: NavHostController) {
             Button(
                 onClick = {
                     FirebaseAuth.getInstance().signOut()
+                    val dbHelper = DBHelper(context, "posts.db", null, 1)
+                    var database = dbHelper.writableDatabase
+                    database.execSQL("INSERT or REPLACE INTO lastlogin VALUES('"+
+                            MainActivity.userdata.useremail+"','"+
+                            MainActivity.userdata.userpassword+"');")
                     navController.navigate(Routes.Login.route)
                 },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
@@ -217,7 +223,17 @@ fun MenuPage(navController: NavHostController) {
             Button(
                 onClick = {
 
-                    navController.navigate(Routes.Login.route)
+                    user?.delete()?.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(context, "Account Deleted", Toast.LENGTH_SHORT)
+                                .show()
+                            navController.navigate(Routes.Login.route)
+                        } else {
+                            Toast.makeText(context, "Delete Failed", Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+
                 },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),

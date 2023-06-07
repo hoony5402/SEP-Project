@@ -86,6 +86,7 @@ fun PostPage_Homepage(navController: NavHostController) {
     var date = "24/06/2023"
     var time = "02:05 pm"
     var location = "Generic Location, Generic Address"
+    var locationName = "Generic Location, Generic Address"
     var image = ""
 
     var i = MainActivity.clickflag
@@ -104,6 +105,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                     dataSnapshot.child("year").getValue().toString()
             time = dataSnapshot.child("time").getValue().toString()
             location = dataSnapshot.child("location").getValue().toString()
+            locationName = dataSnapshot.child("locationName").getValue().toString()
             image = dataSnapshot.child("image").getValue().toString()
         }
 
@@ -111,6 +113,10 @@ fun PostPage_Homepage(navController: NavHostController) {
 
         }
     })
+
+    MainActivity.locName = ""
+    MainActivity.lat = 0.0
+    MainActivity.long = 0.0
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -297,7 +303,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
                     ClickableText(
-                        text = AnnotatedString(location),
+                        text = AnnotatedString(locationName),
                         onClick = {
                             val split = location.split(",")
 
@@ -306,6 +312,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                             Toast.makeText(context, lat.toString() + ", " + long.toString(), Toast.LENGTH_SHORT).show()
                             MainActivity.lat = lat
                             MainActivity.long = long
+                            MainActivity.locName = locationName
                             navController.navigate(Routes.Map.route)
                         },
                         style = TextStyle(
@@ -329,7 +336,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                     if (cursor.moveToFirst()) count = cursor.getInt(0)
 
                     if (count == 0){
-                        database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}');")
+                        database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location,locationName,image) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}','${locationName}','${image}');")
                         Toast.makeText(context, "post added successfully", Toast.LENGTH_SHORT).show()
                     }
                     else Toast.makeText(context, "post is already added", Toast.LENGTH_SHORT).show()

@@ -1,10 +1,16 @@
 package com.example.sep.screen
 
+import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +29,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -49,10 +56,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,26 +72,34 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -105,14 +122,19 @@ fun WritePost(navController: NavHostController) {
 
     val focusManager = LocalFocusManager.current
 
-    val selected = remember { mutableStateOf(BottomIcons.HOME) }
+    val selected = rememberSaveable { mutableStateOf(BottomIcons.HOME) }
 
-    var title by remember{mutableStateOf("")}
-    var description by remember{mutableStateOf("")}
-    var time by remember{mutableStateOf("")}
-    var location by remember{mutableStateOf("")}
-    var type by remember{mutableStateOf("")}
-    var image by remember{mutableStateOf("")}
+    var title by rememberSaveable {mutableStateOf("")}
+    var description by rememberSaveable {mutableStateOf("")}
+    var time by rememberSaveable {mutableStateOf("")}
+    var location by rememberSaveable {mutableStateOf("")}
+    var type by rememberSaveable {mutableStateOf("")}
+    var image by rememberSaveable {mutableStateOf<Uri?>(null)}
+
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            image = uri
+        }
 
     var submit_button_Enabled by remember { mutableStateOf(true) }
 
@@ -137,11 +159,11 @@ fun WritePost(navController: NavHostController) {
 
     // Declaring a string value to
     // store date in string format
-    val mDate = remember { mutableStateOf("") }
+    val mDate = rememberSaveable { mutableStateOf("") }
 
-    var day: String = ""
-    var month: String = ""
-    var year: String = ""
+    var day: String by rememberSaveable {mutableStateOf("")}
+    var month: String by rememberSaveable {mutableStateOf("")}
+    var year: String by rememberSaveable {mutableStateOf("")}
 
     // Declaring DatePickerDialog and setting
     // initial values as current values (present year, month and day)
@@ -165,7 +187,7 @@ fun WritePost(navController: NavHostController) {
     val mMinute = mCalendar[Calendar.MINUTE]
 
     // Value for storing time as a string
-    val mTime = remember { mutableStateOf("") }
+    val mTime = rememberSaveable { mutableStateOf("") }
 
     // Creating a TimePicker dialod
     val mTimePickerDialog = TimePickerDialog(
@@ -216,6 +238,31 @@ fun WritePost(navController: NavHostController) {
 
         }, mHour, mMinute, false
     )
+    var locationName by remember { mutableStateOf("") }
+
+    if(MainActivity.locName==""){
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+        LaunchedEffect(Unit) {
+            try {
+                // 위치 정보 권한 확인
+                val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
+                val hasLocationPermission = ActivityCompat.checkSelfPermission(context, locationPermission) == PackageManager.PERMISSION_GRANTED
+
+                if (hasLocationPermission) {
+                    // 위치 정보를 가져올 수 있는 경우
+                    val loc = fusedLocationClient.lastLocation.await()
+                    MainActivity.lat = loc.latitude
+                    MainActivity.long = loc.longitude
+                } else {
+                    // 위치 정보 권한이 없는 경우 권한 요청
+                    ActivityCompat.requestPermissions(context as Activity, arrayOf(locationPermission), LOCATION_PERMISSION_REQUEST_CODE)
+                }
+            } catch (e: Exception) {
+                // 위치 정보를 가져오는 도중 오류 발생
+                Toast.makeText(context, "Failed to get current location", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -383,7 +430,7 @@ fun WritePost(navController: NavHostController) {
             }
 
             // remember the selected item
-            var selectedItem by remember {
+            var selectedItem by rememberSaveable {
                 mutableStateOf(listItems[0])
             }
 
@@ -615,6 +662,7 @@ fun WritePost(navController: NavHostController) {
                 modifier = Modifier.width((screenWidth / 411.0 * 280).dp)
             )
             {
+                /*
                 TextField(
                     label = null,
                     value = location,
@@ -648,6 +696,80 @@ fun WritePost(navController: NavHostController) {
                         onNext = { focusManager.moveFocus(FocusDirection.Next) }
                     )
                 )
+                 */
+                locationName = MainActivity.locName
+                Button(
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                    onClick = {
+                        navController.navigate(Routes.MapSelect.route)
+                              },
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
+                ) {
+
+                    if (locationName == "")
+                    {
+                        Text(
+                            text = "location",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else
+                    {
+                        Text(
+                            text = "${locationName}",
+                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+
+
+
+                Button(
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                    onClick = {
+                        launcher.launch("image/*")
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
+                ) {
+
+                    if (image == null)
+                    {
+                        Text(
+                            text = "no image",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else
+                    {
+                        Text(
+                            text = "image OK",
+                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+                /*
 
                 TextField(
                     label = null,
@@ -682,6 +804,9 @@ fun WritePost(navController: NavHostController) {
                         onNext = { focusManager.moveFocus(FocusDirection.Next) }
                     )
                 )
+
+                 */
+
             }
 
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 70).dp))
@@ -698,26 +823,88 @@ fun WritePost(navController: NavHostController) {
                     }
                     val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
                     val current_time = LocalDateTime.now().format(format)
+                    location = MainActivity.lat.toString()+','+MainActivity.long.toString()
                     ref.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             num = dataSnapshot.child("number").getValue(Int::class.java)!!
-
-                            ref.child("number").setValue(num+1)
-                            ref.child(num.toString()).child("type").setValue(selectedItem)
-                            var ref2 :DatabaseReference = ref.child(num.toString())
-                            ref2.child("writer").setValue(writer)
-                            ref2.child("write time").setValue(current_time.toString())
-                            ref2.child("title").setValue(title)
-                            ref2.child("description").setValue(description)
-                            ref2.child("image").setValue(image)
-                            ref2.child("year").setValue(year)
-                            ref2.child("month").setValue(month)
-                            ref2.child("day").setValue(day)
-                            ref2.child("time").setValue(mTime.value.toString())
-                            ref2.child("location").setValue(location)
-                            submit_button_Enabled = true
-                            Toast.makeText(context, "Post Success", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Routes.Homepage.route)
+                            if(image!=null) {
+                                val storage =
+                                    Firebase.storage.getReferenceFromUrl("gs://sep-database-2a67a.appspot.com")
+                                val imageRef = storage.child("images").child(selectedItem)
+                                    .child("image " + num.toString())
+                                image?.let {
+                                    imageRef.putFile(it).addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            val imgUrl = imageRef.downloadUrl
+                                            imgUrl.addOnSuccessListener { uri ->
+                                                ref.child("number").setValue(num + 1)
+                                                ref.child(num.toString()).child("type")
+                                                    .setValue(selectedItem)
+                                                var ref2: DatabaseReference =
+                                                    ref.child(num.toString())
+                                                ref2.child("writer").setValue(writer)
+                                                ref2.child("write time")
+                                                    .setValue(current_time.toString())
+                                                ref2.child("title").setValue(title)
+                                                ref2.child("description").setValue(description)
+                                                ref2.child("image").setValue(uri.toString())
+                                                ref2.child("year").setValue(year)
+                                                ref2.child("month").setValue(month)
+                                                ref2.child("day").setValue(day)
+                                                ref2.child("time").setValue(mTime.value.toString())
+                                                ref2.child("location").setValue(location)
+                                                ref2.child("locationName").setValue(locationName)
+                                                submit_button_Enabled = true
+                                                Toast.makeText(
+                                                    context,
+                                                    "Post Success",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                    .show()
+                                                navController.navigate(Routes.Homepage.route)
+                                            }.addOnFailureListener {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Get Image Uri Failed",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Image Upload Failed",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                }
+                            }else{
+                                ref.child("number").setValue(num + 1)
+                                ref.child(num.toString()).child("type")
+                                    .setValue(selectedItem)
+                                var ref2: DatabaseReference =
+                                    ref.child(num.toString())
+                                ref2.child("writer").setValue(writer)
+                                ref2.child("write time")
+                                    .setValue(current_time.toString())
+                                ref2.child("title").setValue(title)
+                                ref2.child("description").setValue(description)
+                                ref2.child("image").setValue("")
+                                ref2.child("year").setValue(year)
+                                ref2.child("month").setValue(month)
+                                ref2.child("day").setValue(day)
+                                ref2.child("time").setValue(mTime.value.toString())
+                                ref2.child("location").setValue(location)
+                                ref2.child("locationName").setValue(locationName)
+                                submit_button_Enabled = true
+                                Toast.makeText(
+                                    context,
+                                    "Post Success",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                                navController.navigate(Routes.Homepage.route)
+                            }
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {

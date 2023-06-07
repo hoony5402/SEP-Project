@@ -122,6 +122,9 @@ fun CalendarPage(navController: NavHostController) {
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
+    MainActivity.locName = ""
+    MainActivity.lat = 0.0
+    MainActivity.long = 0.0
 
 
     Scaffold(
@@ -273,7 +276,7 @@ fun CalendarPage(navController: NavHostController) {
                         val description = cursor.getString(cursor.getColumnIndex("description"))
                         val date = cursor.getString(cursor.getColumnIndex("date"))
                         val time = cursor.getString(cursor.getColumnIndex("time"))
-                        val location = cursor.getString(cursor.getColumnIndex("location"))
+                        val location = cursor.getString(cursor.getColumnIndex("locationName"))
                         val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
 
                         if (selectDate != date) continue

@@ -61,6 +61,7 @@ import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LOCATION_PERMISSION_REQUEST_CODE
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
+import com.example.sep.screen.MapSelect
 import com.example.sep.screen.MenuPage
 import com.example.sep.screen.PostPage_Calendar
 import com.example.sep.screen.PostPage_Homepage
@@ -86,6 +87,7 @@ class MainActivity : ComponentActivity() {
         var clicktype: String = ""
         var lat: Double = 0.0
         var long: Double = 0.0
+        var locName: String = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -215,6 +217,10 @@ fun ScreenMain(){
 
         composable(Routes.Post_Calendar.route) {
             PostPage_Calendar(navController = navController)
+        }
+
+        composable(Routes.MapSelect.route) {
+            MapSelect(navController = navController)
         }
     }
 }

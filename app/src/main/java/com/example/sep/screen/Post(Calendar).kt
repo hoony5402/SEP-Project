@@ -1,5 +1,6 @@
 package com.example.sep.screen
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -58,6 +59,7 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.example.sep.DBHelper
 
+@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun PostPage_Calendar(navController: NavHostController) {
@@ -86,7 +88,14 @@ fun PostPage_Calendar(navController: NavHostController) {
     val date = cursor.getString(cursor.getColumnIndex("date"))
     val time = cursor.getString(cursor.getColumnIndex("time"))
     val location = cursor.getString(cursor.getColumnIndex("location"))
-    val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    val locationName = cursor.getString(cursor.getColumnIndex("locationName"))
+    val imageCheck = cursor.getString(cursor.getColumnIndex("image"))
+    var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    if(imageCheck!="") image=imageCheck
+
+    MainActivity.locName = ""
+    MainActivity.lat = 0.0
+    MainActivity.long = 0.0
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -271,7 +280,7 @@ fun PostPage_Calendar(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
                     ClickableText(
-                        text = AnnotatedString(location),
+                        text = AnnotatedString(locationName),
                         onClick = {
                             val split = location.split(",")
 
@@ -280,6 +289,7 @@ fun PostPage_Calendar(navController: NavHostController) {
                             Toast.makeText(context, lat.toString() + ", " + long.toString(), Toast.LENGTH_SHORT).show()
                             MainActivity.lat = lat
                             MainActivity.long = long
+                            MainActivity.locName = locationName
                             navController.navigate(Routes.Map.route)
                         },
                         style = TextStyle(

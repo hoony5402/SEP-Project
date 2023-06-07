@@ -88,7 +88,9 @@ fun HomepagePage(navController: NavHostController) {
 
     var post_number = "-1"
 
+
     Scaffold(
+
         containerColor = colorResource(R.color.white),
         topBar = {
             TopAppBar(
@@ -199,6 +201,9 @@ fun HomepagePage(navController: NavHostController) {
                 .padding(paddingValues)
                 .background(colorResource(R.color.white))
         ) {
+            MainActivity.locName = ""
+            MainActivity.lat = 0.0
+            MainActivity.long = 0.0
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = colorResource(R.color.transparent),

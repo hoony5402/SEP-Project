@@ -26,6 +26,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -44,6 +46,8 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -57,13 +61,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -84,12 +92,11 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import kotlinx.coroutines.tasks.await
 
-val LOCATION_PERMISSION_REQUEST_CODE = 100
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun MapPage(navController: NavHostController) {
+fun MapSelect(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -101,6 +108,8 @@ fun MapPage(navController: NavHostController) {
     val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.MAP) }
+
+    var locationName by remember { mutableStateOf("") }
 
     var location by remember{mutableStateOf(LatLng(MainActivity.lat, MainActivity.long))}
 
@@ -118,10 +127,8 @@ fun MapPage(navController: NavHostController) {
                     val loc = fusedLocationClient.lastLocation.await()
                     MainActivity.lat = loc.latitude
                     MainActivity.long = loc.longitude
-                    location = LatLng(MainActivity.lat, MainActivity.long)
                     MainActivity.locName = "current"
-                    navController.navigate(Routes.Map.route)
-                    Toast.makeText(context, "Success"+location, Toast.LENGTH_SHORT).show()
+                    location = LatLng(MainActivity.lat, MainActivity.long)
                 } else {
                     // 위치 정보 권한이 없는 경우 권한 요청
                     ActivityCompat.requestPermissions(context as Activity, arrayOf(locationPermission), LOCATION_PERMISSION_REQUEST_CODE)
@@ -177,86 +184,11 @@ fun MapPage(navController: NavHostController) {
                         containerColor = colorResource(id = R.color.black30),
                         titleContentColor = MaterialTheme.colorScheme.onPrimary,
 
-                    ),
+                        ),
                     modifier = Modifier.height(50.dp)
 
                 )
             },
-            bottomBar = {
-                BottomAppBar(
-                    containerColor = colorResource(R.color.color1),
-                    contentColor = colorResource(R.color.white2),
-                    modifier = Modifier
-                        .height((screenHeight / 859.0 * 50).dp)
-                        .clip(
-                            RoundedCornerShape(
-                                (screenHeight / 859.0 * 20).dp,
-                                (screenHeight / 859.0 * 20).dp,
-                                0.dp,
-                                0.dp
-                            )
-                        ),
-                    content = {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceAround,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            IconButton(
-                                onClick = {
-                                    selected.value = BottomIcons.CALENDAR
-                                    navController.navigate(Routes.Calendar.route)
-                                },
-                                modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
-                            ) {
-                                val delete = painterResource(id = R.drawable.calendar)
-                                Icon(
-                                    painter = delete,
-                                    contentDescription = null,
-                                    modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
-                                    tint = if (selected.value == BottomIcons.CALENDAR) colorResource(
-                                        R.color.black
-                                    ) else colorResource(R.color.black50)
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    selected.value = BottomIcons.HOME
-                                    navController.navigate(Routes.Homepage.route)
-                                },
-                                modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
-                            ) {
-                                val delete = painterResource(id = R.drawable.hut)
-                                Icon(
-                                    painter = delete,
-                                    contentDescription = null,
-                                    modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
-                                    tint = if (selected.value == BottomIcons.HOME) colorResource(R.color.black) else colorResource(
-                                        R.color.black50
-                                    )
-                                )
-                            }
-                            IconButton(
-                                onClick = {
-                                    selected.value = BottomIcons.MAP
-                                    navController.navigate(Routes.Map.route)
-                                },
-                                modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
-                            ) {
-                                val delete = painterResource(id = R.drawable.place)
-                                Icon(
-                                    painter = delete,
-                                    contentDescription = null,
-                                    modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
-                                    tint = if (selected.value == BottomIcons.MAP) colorResource(R.color.black) else colorResource(
-                                        R.color.black50
-                                    )
-                                )
-                            }
-                        }
-                    }
-                )
-            }
         ) { paddingValues ->
 
             Column(
@@ -269,9 +201,14 @@ fun MapPage(navController: NavHostController) {
                 GoogleMap(
                     modifier = Modifier
                         .width(screenWidth.dp)
-                        .height(screenHeight.dp - (screenHeight/859.0 * 200).dp)
-                        .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 20).dp)
-                        .clip(RoundedCornerShape((screenHeight/859.0 * 20).dp)),
+                        .height(screenHeight.dp - (screenHeight / 859.0 * 200).dp)
+                        .padding(
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 20).dp,
+                            (screenHeight / 859.0 * 20).dp
+                        )
+                        .clip(RoundedCornerShape((screenHeight / 859.0 * 20).dp)),
                     cameraPositionState = cameraPositionState,
                     onMapClick = { latLng ->
                         marker_state = MarkerState(position = latLng)
@@ -290,11 +227,42 @@ fun MapPage(navController: NavHostController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+                //Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+
+                TextField(
+                    label = null,
+                    value = locationName,
+                    onValueChange = { locationName = it },
+                    placeholder = {
+                        Text(
+                            text = "location",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2)
+                        )
+                    },
+                    colors = TextFieldDefaults.textFieldColors(
+                        containerColor = colorResource(R.color.color6),
+                        textColor = colorResource(R.color.white),
+                        cursorColor = colorResource(R.color.white),
+                        focusedIndicatorColor = colorResource(R.color.transparent),
+                        unfocusedIndicatorColor = colorResource(R.color.transparent),
+                        disabledIndicatorColor = colorResource(R.color.transparent)
+                    ),
+                    textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                )
 
                 Button(
                     onClick = {
-                              context.openMap(location.latitude, location.longitude)
+                        MainActivity.lat = marker_state.position.latitude
+                        MainActivity.long = marker_state.position.longitude
+                        if(locationName=="") locationName="location"
+                        MainActivity.locName = locationName
+                        navController.popBackStack()
                     },
                     shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
@@ -303,7 +271,7 @@ fun MapPage(navController: NavHostController) {
                         .height((screenHeight / 859.0 * 50).dp)
                 ) {
                     Text(
-                        text = "open in maps",
+                        text = "select",
                         fontSize = (screenHeight/859.0 * 20).sp,
                         color = colorResource(R.color.white),
                         fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
@@ -318,27 +286,3 @@ fun MapPage(navController: NavHostController) {
     }
 }
 
-fun Context.openMap(latitude: Double, longitude: Double) {
-
-    //geo:0,0?q=-33.8666,151.1957(Google+Sydney)
-
-    var area = "geo:0,0?q=" + latitude.toString() + "," + longitude.toString()
-
-    // Creates an Intent that will load a map of San Francisco
-    val gmmIntentUri = Uri.parse(area)
-    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
-    mapIntent.setPackage("com.google.android.apps.maps")
-    startActivity(mapIntent)
-
-//    try {
-//        val intent = Intent(Intent.ACTION_SEND)
-//        intent.type = "vnd.android.cursor.item/email" // or "message/rfc822"
-//        intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(to))
-//        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
-//        startActivity(intent)
-//    } catch (e: ActivityNotFoundException) {
-//        // TODO: Handle case where no email app is available
-//    } catch (t: Throwable) {
-//        // TODO: Handle potential other type of exceptions
-//    }
-}
