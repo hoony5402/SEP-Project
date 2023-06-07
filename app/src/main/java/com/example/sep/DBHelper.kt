@@ -20,6 +20,7 @@ class DBHelper(
                 "time text,"+
                 "location text,"+
                 "locationName text,"+
+                "image text,"+
                 "PRIMARY KEY (id, type)"+
                 ");")
         db.execSQL("CREATE TABLE if not exists lastlogin(" +

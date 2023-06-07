@@ -6,8 +6,11 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -93,6 +96,8 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
@@ -124,7 +129,12 @@ fun WritePost(navController: NavHostController) {
     var time by rememberSaveable {mutableStateOf("")}
     var location by rememberSaveable {mutableStateOf("")}
     var type by rememberSaveable {mutableStateOf("")}
-    var image by rememberSaveable {mutableStateOf("")}
+    var image by rememberSaveable {mutableStateOf<Uri?>(null)}
+
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            image = uri
+        }
 
     var submit_button_Enabled by remember { mutableStateOf(true) }
 
@@ -151,9 +161,9 @@ fun WritePost(navController: NavHostController) {
     // store date in string format
     val mDate = rememberSaveable { mutableStateOf("") }
 
-    var day: String = ""
-    var month: String = ""
-    var year: String = ""
+    var day: String by rememberSaveable {mutableStateOf("")}
+    var month: String by rememberSaveable {mutableStateOf("")}
+    var year: String by rememberSaveable {mutableStateOf("")}
 
     // Declaring DatePickerDialog and setting
     // initial values as current values (present year, month and day)
@@ -420,7 +430,7 @@ fun WritePost(navController: NavHostController) {
             }
 
             // remember the selected item
-            var selectedItem by remember {
+            var selectedItem by rememberSaveable {
                 mutableStateOf(listItems[0])
             }
 
@@ -723,6 +733,44 @@ fun WritePost(navController: NavHostController) {
                     }
                 }
 
+
+
+                Button(
+                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
+                    modifier = Modifier
+                        .width((screenWidth / 411.0 * 125).dp)
+                        .height((screenHeight / 859.0 * 60).dp),
+                    onClick = {
+                        launcher.launch("image/*")
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color6))
+                ) {
+
+                    if (image == null)
+                    {
+                        Text(
+                            text = "no image",
+                            fontSize = (screenHeight/859.0 * 16).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white2),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    else
+                    {
+                        Text(
+                            text = "image OK",
+                            fontSize = (screenHeight/859.0 * 14).sp,
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
+                            color = colorResource(R.color.white),
+                            textAlign = TextAlign.Left,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+                /*
+
                 TextField(
                     label = null,
                     value = image,
@@ -756,6 +804,9 @@ fun WritePost(navController: NavHostController) {
                         onNext = { focusManager.moveFocus(FocusDirection.Next) }
                     )
                 )
+
+                 */
+
             }
 
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 70).dp))
@@ -776,24 +827,84 @@ fun WritePost(navController: NavHostController) {
                     ref.addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             num = dataSnapshot.child("number").getValue(Int::class.java)!!
-
-                            ref.child("number").setValue(num+1)
-                            ref.child(num.toString()).child("type").setValue(selectedItem)
-                            var ref2 :DatabaseReference = ref.child(num.toString())
-                            ref2.child("writer").setValue(writer)
-                            ref2.child("write time").setValue(current_time.toString())
-                            ref2.child("title").setValue(title)
-                            ref2.child("description").setValue(description)
-                            ref2.child("image").setValue(image)
-                            ref2.child("year").setValue(year)
-                            ref2.child("month").setValue(month)
-                            ref2.child("day").setValue(day)
-                            ref2.child("time").setValue(mTime.value.toString())
-                            ref2.child("location").setValue(location)
-                            ref2.child("locationName").setValue(locationName)
-                            submit_button_Enabled = true
-                            Toast.makeText(context, "Post Success", Toast.LENGTH_SHORT).show()
-                            navController.navigate(Routes.Homepage.route)
+                            if(image!=null) {
+                                val storage =
+                                    Firebase.storage.getReferenceFromUrl("gs://sep-database-2a67a.appspot.com")
+                                val imageRef = storage.child("images").child(selectedItem)
+                                    .child("image " + num.toString())
+                                image?.let {
+                                    imageRef.putFile(it).addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            val imgUrl = imageRef.downloadUrl
+                                            imgUrl.addOnSuccessListener { uri ->
+                                                ref.child("number").setValue(num + 1)
+                                                ref.child(num.toString()).child("type")
+                                                    .setValue(selectedItem)
+                                                var ref2: DatabaseReference =
+                                                    ref.child(num.toString())
+                                                ref2.child("writer").setValue(writer)
+                                                ref2.child("write time")
+                                                    .setValue(current_time.toString())
+                                                ref2.child("title").setValue(title)
+                                                ref2.child("description").setValue(description)
+                                                ref2.child("image").setValue(uri.toString())
+                                                ref2.child("year").setValue(year)
+                                                ref2.child("month").setValue(month)
+                                                ref2.child("day").setValue(day)
+                                                ref2.child("time").setValue(mTime.value.toString())
+                                                ref2.child("location").setValue(location)
+                                                ref2.child("locationName").setValue(locationName)
+                                                submit_button_Enabled = true
+                                                Toast.makeText(
+                                                    context,
+                                                    "Post Success",
+                                                    Toast.LENGTH_SHORT
+                                                )
+                                                    .show()
+                                                navController.navigate(Routes.Homepage.route)
+                                            }.addOnFailureListener {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Get Image Uri Failed",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Image Upload Failed",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                                }
+                            }else{
+                                ref.child("number").setValue(num + 1)
+                                ref.child(num.toString()).child("type")
+                                    .setValue(selectedItem)
+                                var ref2: DatabaseReference =
+                                    ref.child(num.toString())
+                                ref2.child("writer").setValue(writer)
+                                ref2.child("write time")
+                                    .setValue(current_time.toString())
+                                ref2.child("title").setValue(title)
+                                ref2.child("description").setValue(description)
+                                ref2.child("image").setValue("")
+                                ref2.child("year").setValue(year)
+                                ref2.child("month").setValue(month)
+                                ref2.child("day").setValue(day)
+                                ref2.child("time").setValue(mTime.value.toString())
+                                ref2.child("location").setValue(location)
+                                ref2.child("locationName").setValue(locationName)
+                                submit_button_Enabled = true
+                                Toast.makeText(
+                                    context,
+                                    "Post Success",
+                                    Toast.LENGTH_SHORT
+                                )
+                                    .show()
+                                navController.navigate(Routes.Homepage.route)
+                            }
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {

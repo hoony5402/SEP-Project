@@ -89,7 +89,9 @@ fun PostPage_Calendar(navController: NavHostController) {
     val time = cursor.getString(cursor.getColumnIndex("time"))
     val location = cursor.getString(cursor.getColumnIndex("location"))
     val locationName = cursor.getString(cursor.getColumnIndex("locationName"))
-    val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    val imageCheck = cursor.getString(cursor.getColumnIndex("image"))
+    var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    if(imageCheck!="") image=imageCheck
 
     MainActivity.locName = ""
     MainActivity.lat = 0.0
