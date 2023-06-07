@@ -336,7 +336,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                     if (cursor.moveToFirst()) count = cursor.getInt(0)
 
                     if (count == 0){
-                        database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}');")
+                        database.execSQL("INSERT INTO posts(id,type,title,description,date,time,location,locationName) values('${i}','${type}','${title}','${description}','${date}','${time}','${location}','${locationName}');")
                         Toast.makeText(context, "post added successfully", Toast.LENGTH_SHORT).show()
                     }
                     else Toast.makeText(context, "post is already added", Toast.LENGTH_SHORT).show()
