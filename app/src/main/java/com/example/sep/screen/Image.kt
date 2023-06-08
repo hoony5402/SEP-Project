@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -59,7 +61,7 @@ import com.example.sep.DBHelper
 @SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostPage_Calendar(navController: NavHostController) {
+fun Image(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -197,139 +199,58 @@ fun PostPage_Calendar(navController: NavHostController) {
             )
         }
     ) { paddingValues ->
-        Column (
-            modifier = Modifier.padding(paddingValues).fillMaxWidth(),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
+//        Column (
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalArrangement = Arrangement.SpaceEvenly,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+////            Card(
+////                modifier = Modifier
+////                    .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 700).dp)
+////                    .paint(
+////                        painter = rememberAsyncImagePainter(
+////                            model = ImageRequest
+////                                .Builder(LocalContext.current)
+////                                .data(image)
+////                                .scale(Scale.FIT)
+////                                .build()
+////                        ),
+////                        contentScale = ContentScale.Crop
+////                    ),
+////                colors = CardDefaults.cardColors(containerColor = colorResource(R.color.transparent)
+////                )
+////            )
+////            {
+////
+////            }
+//
+//            Image(
+//                painter = rememberAsyncImagePainter(
+//                    model = ImageRequest
+//                        .Builder(LocalContext.current)
+//                        .data(image)
+//                        .scale(Scale.FIT)
+//                        .build()
+//                ),
+//                contentDescription = null
+//            )
+//        }
 
-            Text(
-                text = type,
-                textAlign = TextAlign.Center,
-                fontSize = (screenHeight/859.0 * 30).sp,
-                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                color = colorResource(R.color.black)
+        Box(
+            modifier = Modifier.fillMaxSize().padding((screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp),
+            contentAlignment = Alignment.Center
+        )
+        {
+            Image(
+                painter = rememberAsyncImagePainter(
+                    model = ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(image)
+                        .scale(Scale.FIT)
+                        .build()
+                ),
+                contentDescription = null
             )
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
-
-            Card(
-                modifier = Modifier
-                    .padding(
-                        (screenHeight / 859.0 * 20).dp,
-                        (screenHeight / 859.0 * 5).dp,
-                        (screenHeight / 859.0 * 20).dp,
-                        0.dp
-                    )
-                    .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 500).dp)
-                    .align(Alignment.CenterHorizontally)
-                    .clip(RoundedCornerShape((screenHeight / 859.0 * 25).dp))
-                    .paint(
-                        painter = rememberAsyncImagePainter(
-                            model = ImageRequest
-                                .Builder(LocalContext.current)
-                                .data(image)
-                                .scale(Scale.FIT)
-                                .build()
-                        ),
-                        contentScale = ContentScale.Crop
-                    ),
-                colors = CardDefaults.cardColors(containerColor = colorResource(R.color.black70)
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(
-                            (screenHeight / 859.0 * 20).dp,
-                            (screenHeight / 859.0 * 20).dp,
-                            (screenHeight / 859.0 * 20).dp,
-                            0.dp
-                        )
-                        .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 500).dp)
-                ) {
-                    Text(
-                        text = title,
-                        textAlign = TextAlign.Left,
-                        fontSize = (screenHeight/859.0 * 25).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
-                        color = colorResource(R.color.white),
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
-                    Text(
-                        text = description,
-                        textAlign = TextAlign.Left,
-                        fontSize = (screenHeight/859.0 * 18).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white)
-                    )
-                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-                    Text(
-                        text = "$date - $time",
-                        textAlign = TextAlign.Left,
-                        fontSize = (screenHeight/859.0 * 18).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white)
-                    )
-                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-                    ClickableText(
-                        text = AnnotatedString(locationName),
-                        onClick = {
-                            val split = location.split(",")
-
-                            val lat = split[0].toDouble()
-                            val long = split[1].toDouble()
-                            MainActivity.lat = lat
-                            MainActivity.long = long
-                            MainActivity.locName = locationName
-                            navController.navigate(Routes.Map.route)
-                        },
-                        style = TextStyle(
-                            fontSize = (screenHeight/859.0 * 18).sp,
-                            textDecoration = TextDecoration.Underline,
-                            color = colorResource(R.color.white),
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-                        )
-                    )
-                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-                    ClickableText(
-                        text = AnnotatedString("view image"),
-                        onClick = {
-                            navController.navigate(Routes.Image.route)
-                        },
-                        style = TextStyle(
-                            fontSize = (screenHeight/859.0 * 18).sp,
-                            textDecoration = TextDecoration.Underline,
-                            color = colorResource(R.color.white),
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-                        )
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
-
-            Button(
-                onClick = {
-                    val database = dbHelper.writableDatabase
-                    Toast.makeText(context, "post removed successfully!", Toast.LENGTH_SHORT).show()
-                    database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
-                    navController.navigate(Routes.Calendar.route)
-                },
-                shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 300).dp)
-                    .height((screenHeight / 859.0 * 50).dp)
-            ) {
-                Text(
-                    text = "remove from calendar",
-                    fontSize = (screenHeight/859.0 * 20).sp,
-                    color = colorResource(R.color.white),
-                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-                )
-            }
         }
     }
 }

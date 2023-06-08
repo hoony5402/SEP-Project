@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.sep.screen.CalendarPage
 import com.example.sep.screen.HomepagePage
+import com.example.sep.screen.Image
 import com.example.sep.screen.LOCATION_PERMISSION_REQUEST_CODE
 import com.example.sep.screen.LoginPage
 import com.example.sep.screen.MapPage
@@ -184,6 +185,10 @@ fun ScreenMain(){
 
         composable(Routes.MapSelect.route) {
             MapSelect(navController = navController)
+        }
+
+        composable(Routes.Image.route) {
+            Image(navController = navController)
         }
     }
 }

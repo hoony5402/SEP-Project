@@ -313,6 +313,19 @@ fun PostPage_Homepage(navController: NavHostController) {
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
                         )
                     )
+                    Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+                    ClickableText(
+                        text = AnnotatedString("view image"),
+                        onClick = {
+                            navController.navigate(Routes.Image.route)
+                        },
+                        style = TextStyle(
+                            fontSize = (screenHeight/859.0 * 18).sp,
+                            textDecoration = TextDecoration.Underline,
+                            color = colorResource(R.color.white),
+                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                        )
+                    )
                 }
             }
 

@@ -11,5 +11,7 @@ sealed class Routes(val route: String) {
     object Post_Homepage : Routes("Post_Homepage")
     object Post_Calendar : Routes("Post_Calendar")
     object MapSelect : Routes("MapSelect")
+    object Image : Routes("Image")
+
 
 }
