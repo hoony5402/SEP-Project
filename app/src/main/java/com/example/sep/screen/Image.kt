@@ -1,71 +1,67 @@
 package com.example.sep.screen
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Scale
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
-import kotlinx.coroutines.tasks.await
+import com.example.sep.DBHelper
 
-
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("Range")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapSelect(navController: NavHostController) {
+fun Image(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -73,42 +69,29 @@ fun MapSelect(navController: NavHostController) {
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
 
-    val selected = remember { mutableStateOf(BottomIcons.MAP) }
+    val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
-    var locationName by remember { mutableStateOf("") }
+    val i = MainActivity.clickflag
+    val type = MainActivity.clicktype
 
-    var location by remember{mutableStateOf(LatLng(MainActivity.lat, MainActivity.long))}
+    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
+    val database = dbHelper.writableDatabase
+    val cursor = database.rawQuery("SELECT * FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
 
-    if(MainActivity.locName==""){
-        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
+    cursor.moveToNext()
+    val title = cursor.getString(cursor.getColumnIndex("title"))
+    val description = cursor.getString(cursor.getColumnIndex("description"))
+    val date = cursor.getString(cursor.getColumnIndex("date"))
+    val time = cursor.getString(cursor.getColumnIndex("time"))
+    val location = cursor.getString(cursor.getColumnIndex("location"))
+    val locationName = cursor.getString(cursor.getColumnIndex("locationName"))
+    val imageCheck = cursor.getString(cursor.getColumnIndex("image"))
+    var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+    if(imageCheck!="") image=imageCheck
 
-        LaunchedEffect(Unit) {
-            try {
-                // 위치 정보 권한 확인
-                val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
-                val hasLocationPermission = ActivityCompat.checkSelfPermission(context, locationPermission) == PackageManager.PERMISSION_GRANTED
-
-                if (hasLocationPermission) {
-                    // 위치 정보를 가져올 수 있는 경우
-                    val loc = fusedLocationClient.lastLocation.await()
-                    MainActivity.lat = loc.latitude
-                    MainActivity.long = loc.longitude
-                    MainActivity.locName = "current"
-                    location = LatLng(MainActivity.lat, MainActivity.long)
-                } else {
-                    // 위치 정보 권한이 없는 경우 권한 요청
-                    ActivityCompat.requestPermissions(context as Activity, arrayOf(locationPermission), LOCATION_PERMISSION_REQUEST_CODE)
-                }
-            } catch (e: Exception) {
-                // 위치 정보를 가져오는 도중 오류 발생
-                Toast.makeText(context, "Failed to get current location", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(location, 15f)
-    }
+    MainActivity.locName = ""
+    MainActivity.lat = 0.0
+    MainActivity.long = 0.0
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -121,7 +104,7 @@ fun MapSelect(navController: NavHostController) {
                             .padding(0.dp, 0.dp, (screenHeight / 859.0 * 10).dp, 0.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    ){
                         IconButton(
                             onClick = {
                                 navController.navigate(Routes.Menu.route)
@@ -145,11 +128,10 @@ fun MapSelect(navController: NavHostController) {
                             )
                     }
                 },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors (
                     containerColor = colorResource(id = R.color.black30),
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-
-                    ),
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                ),
                 modifier = Modifier.height(50.dp)
 
             )
@@ -217,103 +199,58 @@ fun MapSelect(navController: NavHostController) {
             )
         }
     ) { paddingValues ->
+//        Column (
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalArrangement = Arrangement.SpaceEvenly,
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+////            Card(
+////                modifier = Modifier
+////                    .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 700).dp)
+////                    .paint(
+////                        painter = rememberAsyncImagePainter(
+////                            model = ImageRequest
+////                                .Builder(LocalContext.current)
+////                                .data(image)
+////                                .scale(Scale.FIT)
+////                                .build()
+////                        ),
+////                        contentScale = ContentScale.Crop
+////                    ),
+////                colors = CardDefaults.cardColors(containerColor = colorResource(R.color.transparent)
+////                )
+////            )
+////            {
+////
+////            }
+//
+//            Image(
+//                painter = rememberAsyncImagePainter(
+//                    model = ImageRequest
+//                        .Builder(LocalContext.current)
+//                        .data(image)
+//                        .scale(Scale.FIT)
+//                        .build()
+//                ),
+//                contentDescription = null
+//            )
+//        }
 
-        Column(
-            modifier = Modifier.padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Box(
+            modifier = Modifier.fillMaxSize().padding((screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp),
+            contentAlignment = Alignment.Center
         )
         {
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
-
-            Text(
-                text = "tap to select pin location",
-                fontSize = (screenHeight/859.0 * 20).sp,
-                color = colorResource(R.color.black),
-                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-            )
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 10).dp))
-
-
-            var marker_state by remember {mutableStateOf(MarkerState(position = location))}
-
-            GoogleMap(
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 420).dp)
-                    .height((screenHeight / 859.0 * 500).dp)
-                    .padding((screenWidth / 411.0 * 20).dp, 0.dp, (screenWidth / 411.0 * 20).dp, 0.dp)
-                    .clip(RoundedCornerShape((screenHeight / 859.0 * 20).dp)),
-                cameraPositionState = cameraPositionState,
-                onMapClick = { latLng ->
-                    marker_state = MarkerState(position = latLng)
-                },
-            ) {
-                Marker(
-                    state = MarkerState(position = location),
-                    title = "You",
-                    snippet = "Marker"
-                )
-
-                Marker(
-                    state = marker_state,
-                    title = "You",
-                    snippet = "Marker"
-                )
-            }
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
-
-            TextField(
-                label = null,
-                value = locationName,
-                onValueChange = { locationName = it },
-                placeholder = {
-                    Text(
-                        text = "enter location name",
-                        fontSize = (screenHeight/859.0 * 16).sp,
-                        fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                        color = colorResource(R.color.white2)
-                    )
-                },
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = colorResource(R.color.color6),
-                    textColor = colorResource(R.color.white),
-                    cursorColor = colorResource(R.color.white),
-                    focusedIndicatorColor = colorResource(R.color.transparent),
-                    unfocusedIndicatorColor = colorResource(R.color.transparent),
-                    disabledIndicatorColor = colorResource(R.color.transparent)
+            Image(
+                painter = rememberAsyncImagePainter(
+                    model = ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(image)
+                        .scale(Scale.FIT)
+                        .build()
                 ),
-                textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-                shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 370).dp)
-                    .height((screenHeight / 859.0 * 60).dp),
+                contentDescription = null
             )
-
-            Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
-
-            Button(
-                onClick = {
-                    MainActivity.lat = marker_state.position.latitude
-                    MainActivity.long = marker_state.position.longitude
-                    if(locationName=="") locationName="location"
-                    MainActivity.locName = locationName
-                    navController.popBackStack()
-                },
-                shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color1)),
-                modifier = Modifier
-                    .width((screenWidth / 411.0 * 300).dp)
-                    .height((screenHeight / 859.0 * 50).dp)
-            ) {
-                Text(
-                    text = "select",
-                    fontSize = (screenHeight/859.0 * 20).sp,
-                    color = colorResource(R.color.white),
-                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
-                )
-            }
         }
     }
 }
-

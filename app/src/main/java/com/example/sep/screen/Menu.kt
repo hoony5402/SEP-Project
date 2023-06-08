@@ -1,9 +1,7 @@
 package com.example.sep.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,10 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,16 +26,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -57,18 +45,17 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MenuPage(navController: NavHostController) {
 
     val systemUiController = rememberSystemUiController()
     systemUiController.setStatusBarColor(colorResource(R.color.black30))
 
-    var auth = FirebaseAuth.getInstance()
+    val auth = FirebaseAuth.getInstance()
 
-    var user = auth.currentUser
+    val user = auth.currentUser
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -77,9 +64,9 @@ fun MenuPage(navController: NavHostController) {
     if (user != null)
     {
         // Get info from DB here
-        username = MainActivity.userdata.username.toString()
-        email = MainActivity.userdata.useremail.toString()
-        studentID = MainActivity.userdata.studentid.toString()
+        username = MainActivity.userdata.username
+        email = MainActivity.userdata.useremail
+        studentID = MainActivity.userdata.studentid
     }else{
         navController.navigate(Routes.Login.route)
     }
@@ -90,11 +77,6 @@ fun MenuPage(navController: NavHostController) {
 
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
-
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
-    val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -110,8 +92,6 @@ fun MenuPage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 if(navController.popBackStack().not()) {
                                     navController.navigate(Routes.Homepage.route)
                                 }
@@ -198,7 +178,7 @@ fun MenuPage(navController: NavHostController) {
                 onClick = {
                     FirebaseAuth.getInstance().signOut()
                     val dbHelper = DBHelper(context, "posts.db", null, 1)
-                    var database = dbHelper.writableDatabase
+                    val database = dbHelper.writableDatabase
                     database.execSQL("INSERT or REPLACE INTO lastlogin VALUES('"+
                             MainActivity.userdata.useremail+"','"+
                             MainActivity.userdata.userpassword+"');")

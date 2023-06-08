@@ -1,10 +1,6 @@
 package com.example.sep.screen
 
-import android.graphics.Paint
-import android.icu.lang.UCharacter.DecompositionType.NARROW
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,32 +18,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -56,22 +36,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -86,26 +61,19 @@ import com.example.sep.DBHelper
 import com.example.sep.R
 import com.example.sep.Routes
 import io.github.boguszpawlowski.composecalendar.SelectableCalendar
-import io.github.boguszpawlowski.composecalendar.day.DayState
-import io.github.boguszpawlowski.composecalendar.day.NonSelectableDayState
 import io.github.boguszpawlowski.composecalendar.header.MonthState
 import io.github.boguszpawlowski.composecalendar.kotlinxDateTime.now
-import io.github.boguszpawlowski.composecalendar.kotlinxDateTime.toKotlinYearMonth
 import io.github.boguszpawlowski.composecalendar.rememberSelectableCalendarState
 import io.github.boguszpawlowski.composecalendar.selection.DynamicSelectionState
 import io.github.boguszpawlowski.composecalendar.selection.SelectionMode
 import io.github.boguszpawlowski.composecalendar.selection.SelectionState
-import kotlinx.coroutines.launch
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 import kotlinx.datetime.toJavaLocalDate
-import kotlinx.datetime.toKotlinLocalDate
 import java.time.DayOfWeek
-import java.time.Year
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarPage(navController: NavHostController) {
 
@@ -114,9 +82,6 @@ fun CalendarPage(navController: NavHostController) {
 
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
-
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.CALENDAR) }
 
@@ -141,8 +106,6 @@ fun CalendarPage(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Menu.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -195,8 +158,6 @@ fun CalendarPage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.CALENDAR
-                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -212,8 +173,6 @@ fun CalendarPage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.HOME
-                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -229,8 +188,6 @@ fun CalendarPage(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.MAP
-                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -250,7 +207,7 @@ fun CalendarPage(navController: NavHostController) {
     ) { paddingValues ->
         Column (
             modifier = Modifier.padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = CenterHorizontally
         ) {
             val temp_list: List<LocalDate> = listOf(LocalDate.now())
 
@@ -285,7 +242,9 @@ fun CalendarPage(navController: NavHostController) {
                         val date = cursor.getString(cursor.getColumnIndex("date"))
                         val time = cursor.getString(cursor.getColumnIndex("time"))
                         val location = cursor.getString(cursor.getColumnIndex("locationName"))
-                        val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+                        val imageCheck = cursor.getString(cursor.getColumnIndex("image"))
+                        var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+                        if(imageCheck!="") image=imageCheck
 
                         if (selectDate != date) continue
 
@@ -301,7 +260,7 @@ fun CalendarPage(navController: NavHostController) {
                                 }
                                 .padding((screenHeight/859.0 * 20).dp, (screenHeight/859.0 * 5).dp, (screenHeight/859.0 * 20).dp, 0.dp)
                                 .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
-                                .align(Alignment.CenterHorizontally)
+                                .align(CenterHorizontally)
                                 .clip(RoundedCornerShape((screenHeight/859.0 * 25).dp))
                                 .paint(
                                     painter = rememberAsyncImagePainter(
@@ -322,7 +281,7 @@ fun CalendarPage(navController: NavHostController) {
                                     .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
                             ) {
                                 Text(
-                                    text = title + " " + i.toString(),
+                                    text = title,
                                     textAlign = TextAlign.Left,
                                     fontSize = (screenHeight/859.0 * 20).sp,
                                     fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),
@@ -353,7 +312,7 @@ fun CalendarPage(navController: NavHostController) {
                         Spacer(modifier = Modifier.height((screenHeight/859.0 * 40).dp))
 
                         Card(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                            modifier = Modifier.align(CenterHorizontally),
                             colors = CardDefaults.cardColors(containerColor = colorResource(R.color.white))
                         )
                         {
