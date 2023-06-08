@@ -60,6 +60,7 @@ fun MenuPage(navController: NavHostController) {
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var studentID by remember { mutableStateOf("") }
+    var usertype by remember { mutableStateOf("") }
 
     if (user != null)
     {
@@ -67,6 +68,8 @@ fun MenuPage(navController: NavHostController) {
         username = MainActivity.userdata.username
         email = MainActivity.userdata.useremail
         studentID = MainActivity.userdata.studentid
+        usertype = MainActivity.userdata.usertype
+
     }else{
         navController.navigate(Routes.Login.route)
     }
@@ -151,12 +154,22 @@ fun MenuPage(navController: NavHostController) {
                 fontSize = (screenHeight/859.0 * 16).sp,
                 fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
             )
+            Text(
+                text = usertype,
+                textAlign = TextAlign.Center,
+                fontSize = (screenHeight/859.0 * 16).sp,
+                fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+            )
 
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 130).dp))
 
             Button(
                 onClick = {
-                    navController.navigate(Routes.WritePost.route)
+                    if(usertype!="Student") navController.navigate(Routes.WritePost.route)
+                    else{
+                        Toast.makeText(context, "Student can't post", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 },
                 shape = RoundedCornerShape((screenHeight/859.0 * 15).dp),
                 colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.color2)),

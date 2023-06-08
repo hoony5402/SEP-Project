@@ -5,17 +5,20 @@ class UserData {
     var useremail: String = ""
     var studentid: String = ""
     var userpassword: String = ""
-    fun set(name:String,email:String,id:String,password:String){
+    var usertype: String = ""
+    fun set(name:String,email:String,id:String,password:String,type:String){
         username = name
         useremail = email
         studentid = id
         userpassword = password
+        usertype = type
     }
     fun reset(){
         username = ""
         useremail = ""
         studentid = ""
         userpassword = ""
+        usertype = ""
     }
     
 }

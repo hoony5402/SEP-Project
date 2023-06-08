@@ -87,6 +87,7 @@ fun LoginPage(navController: NavHostController) {
 
     if(user!=null){
         login_success(user.email.toString())
+        get_marker(context)
         Toast.makeText(context,user.email+" login success", Toast.LENGTH_SHORT).show()
         navController.navigate(Routes.Homepage.route)
     }else{
@@ -216,6 +217,7 @@ fun LoginPage(navController: NavHostController) {
                                 Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                                 user = auth.currentUser
                                 login_success(email)
+                                get_marker(context)
                                 navController.navigate(Routes.Homepage.route)
                             }else{
                                 Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
@@ -235,6 +237,7 @@ fun LoginPage(navController: NavHostController) {
                             Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                             user = auth.currentUser
                             login_success(email)
+                            get_marker(context)
                             navController.navigate(Routes.Homepage.route)
                         }else{
                             Toast.makeText(context,"Login Failed", Toast.LENGTH_SHORT).show()
@@ -287,7 +290,9 @@ fun login_success(email:String){
                         dataSnapshot2.child("name").getValue().toString(),
                         dataSnapshot2.child("email").getValue().toString(),
                         dataSnapshot2.child("studentid").getValue().toString(),
-                        dataSnapshot2.child("password").getValue().toString()
+                        dataSnapshot2.child("password").getValue().toString(),
+                        dataSnapshot2.child("usertype").getValue().toString()
+
                     )
                 }
 
@@ -303,6 +308,24 @@ fun login_success(email:String){
     })
 }
 
+fun get_marker(context:Context){
+    val db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    val ref = db.reference.child("map").child("shop")
+    ref.addListenerForSingleValueEvent(object : ValueEventListener {
+        override fun onDataChange(dataSnapshot: DataSnapshot) {
+            for(children in dataSnapshot.children){
+                val name = children.child("name").getValue().toString()
+                val loc = children.child("location").getValue().toString()
+                MainActivity.shopMark.add(listOf(name,loc))
+            }
+            Toast.makeText(context,MainActivity.shopMark.toString(), Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onCancelled(databaseError: DatabaseError) {
+            Toast.makeText(context,"Load map maker failed", Toast.LENGTH_SHORT).show()
+        }
+    })
+}
 @SuppressLint("Range")
 fun GetLastLoginInfo(context: Context): Array<Any>{
     val dbHelper = DBHelper(context, "posts.db", null, 1)

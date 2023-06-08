@@ -47,12 +47,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 private var auth: FirebaseAuth? = null
 
@@ -340,13 +344,38 @@ fun RegisterPage(navController: NavHostController) {
                     )
                         .addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                register_success(name,studentID,email,password)
-                                Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
-                                    .show()
-                                auth!!.signOut()
-                                navController.navigate(Routes.Login.route)
+                                val db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                                val ref = db.reference.child("users")
+                                var namecheck = false
+                                var keyuser = ""
+                                ref.addListenerForSingleValueEvent(object : ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        for(children in dataSnapshot.children){
+                                            if(children.key == name){
+                                                namecheck = true
+                                            }
+                                        }
+                                        if(namecheck){
+                                            Toast.makeText(context, "Same name exist", Toast.LENGTH_SHORT)
+                                                .show()
+                                            auth!!.currentUser?.delete()
+                                        }
+                                        else{
+                                            register_success(name,studentID,email,password)
+                                            Toast.makeText(context, "Register Success", Toast.LENGTH_SHORT)
+                                                .show()
+                                            auth!!.signOut()
+                                            navController.navigate(Routes.Login.route)
+                                        }
+                                    }
+
+                                    override fun onCancelled(databaseError: DatabaseError) {
+                                        Toast.makeText(context, "Register Failed. Check Internet Connect", Toast.LENGTH_SHORT)
+                                            .show()
+                                    }
+                                })
                             } else {
-                                Toast.makeText(context, "Register Failed", Toast.LENGTH_SHORT)
+                                Toast.makeText(context, "Register Failed. Check Email", Toast.LENGTH_SHORT)
                                     .show()
                             }
                         }
@@ -393,5 +422,6 @@ fun register_success(name: String,student: String,email: String,password: String
     ref.child(name).child("name").setValue(name)
     ref.child(name).child("studentid").setValue(student)
     ref.child(name).child("password").setValue(password)
+    ref.child(name).child("usertype").setValue("Editor")
 
 }

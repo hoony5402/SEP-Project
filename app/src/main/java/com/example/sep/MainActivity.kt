@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
         var lat: Double = 0.0
         var long: Double = 0.0
         var locName: String = ""
+        var shopMark: ArrayList<List<String>> = ArrayList()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -261,6 +261,17 @@ fun MapPage(navController: NavHostController) {
                         title = "You",
                         snippet = "Marker"
                     )
+                    for (i in 0 until MainActivity.shopMark.size){
+                        val split = MainActivity.shopMark[i][1].split(",")
+                        val mlat = split[0].toDouble()
+                        val mlong = split[1].toDouble()
+                        Marker(
+                            state = MarkerState(position = LatLng(mlat,mlong)),
+                            title = MainActivity.shopMark[i][0],
+                            snippet = "Marker",
+                            alpha = 0.7f
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
