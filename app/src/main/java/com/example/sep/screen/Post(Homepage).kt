@@ -1,7 +1,6 @@
 package com.example.sep.screen
 
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.BottomAppBar
@@ -29,11 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,9 +60,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.getValue
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostPage_Homepage(navController: NavHostController) {
 
@@ -75,9 +70,6 @@ fun PostPage_Homepage(navController: NavHostController) {
 
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
-
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
 
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
@@ -89,13 +81,13 @@ fun PostPage_Homepage(navController: NavHostController) {
     var locationName = "Generic Location, Generic Address"
     var image = ""
 
-    var i = MainActivity.clickflag
-    var type = MainActivity.clicktype
+    val i = MainActivity.clickflag
+    val type = MainActivity.clicktype
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
 
-    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref = db.reference.child("posts").child(type).child(MainActivity.clickflag.toString())
+    val db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    val ref = db.reference.child("posts").child(type).child(MainActivity.clickflag.toString())
     ref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             title = dataSnapshot.child("title").getValue().toString()
@@ -295,7 +287,7 @@ fun PostPage_Homepage(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
                     Text(
-                        text = date + " - " + time,
+                        text = "$date - $time",
                         textAlign = TextAlign.Left,
                         fontSize = (screenHeight/859.0 * 18).sp,
                         fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -307,9 +299,8 @@ fun PostPage_Homepage(navController: NavHostController) {
                         onClick = {
                             val split = location.split(",")
 
-                            var lat = split[0].toDouble()
-                            var long = split[1].toDouble()
-                            Toast.makeText(context, lat.toString() + ", " + long.toString(), Toast.LENGTH_SHORT).show()
+                            val lat = split[0].toDouble()
+                            val long = split[1].toDouble()
                             MainActivity.lat = lat
                             MainActivity.long = long
                             MainActivity.locName = locationName
@@ -329,10 +320,10 @@ fun PostPage_Homepage(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    var database = dbHelper.writableDatabase
+                    val database = dbHelper.writableDatabase
 
                     var count = 0
-                    var cursor = database.rawQuery("SELECT count(*) FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
+                    val cursor = database.rawQuery("SELECT count(*) FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
                     if (cursor.moveToFirst()) count = cursor.getInt(0)
 
                     if (count == 0){

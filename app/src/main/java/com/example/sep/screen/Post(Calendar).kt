@@ -2,7 +2,6 @@ package com.example.sep.screen
 
 import android.annotation.SuppressLint
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.BottomAppBar
@@ -32,7 +30,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,7 +57,7 @@ import com.example.sep.Routes
 import com.example.sep.DBHelper
 
 @SuppressLint("Range")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostPage_Calendar(navController: NavHostController) {
 
@@ -70,17 +67,14 @@ fun PostPage_Calendar(navController: NavHostController) {
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
 
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
 
-    var i = MainActivity.clickflag
-    var type = MainActivity.clicktype
+    val i = MainActivity.clickflag
+    val type = MainActivity.clicktype
 
     val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
-    var database = dbHelper.writableDatabase
-    var cursor = database.rawQuery("SELECT * FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
+    val database = dbHelper.writableDatabase
+    val cursor = database.rawQuery("SELECT * FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
 
     cursor.moveToNext()
     val title = cursor.getString(cursor.getColumnIndex("title"))
@@ -272,7 +266,7 @@ fun PostPage_Calendar(navController: NavHostController) {
                     )
                     Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
                     Text(
-                        text = date + " - " + time,
+                        text = "$date - $time",
                         textAlign = TextAlign.Left,
                         fontSize = (screenHeight/859.0 * 18).sp,
                         fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
@@ -284,9 +278,8 @@ fun PostPage_Calendar(navController: NavHostController) {
                         onClick = {
                             val split = location.split(",")
 
-                            var lat = split[0].toDouble()
-                            var long = split[1].toDouble()
-                            Toast.makeText(context, lat.toString() + ", " + long.toString(), Toast.LENGTH_SHORT).show()
+                            val lat = split[0].toDouble()
+                            val long = split[1].toDouble()
                             MainActivity.lat = lat
                             MainActivity.long = long
                             MainActivity.locName = locationName
@@ -306,7 +299,7 @@ fun PostPage_Calendar(navController: NavHostController) {
 
             Button(
                 onClick = {
-                    var database = dbHelper.writableDatabase
+                    val database = dbHelper.writableDatabase
                     Toast.makeText(context, "post removed successfully!", Toast.LENGTH_SHORT).show()
                     database.execSQL("DELETE FROM posts WHERE id = '${i}' AND type = '${type}';")
                     navController.navigate(Routes.Calendar.route)

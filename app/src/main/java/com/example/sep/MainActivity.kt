@@ -4,59 +4,26 @@ package com.example.sep
 
 import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.sep.screen.CalendarPage
-import com.example.sep.screen.CardObject
 import com.example.sep.screen.HomepagePage
 import com.example.sep.screen.LOCATION_PERMISSION_REQUEST_CODE
 import com.example.sep.screen.LoginPage
@@ -67,13 +34,9 @@ import com.example.sep.screen.PostPage_Calendar
 import com.example.sep.screen.PostPage_Homepage
 import com.example.sep.screen.RegisterPage
 import com.example.sep.screen.WritePost
-import com.example.sep.screen.TabScreen
 import com.example.sep.ui.theme.SEPTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.MapView
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 
@@ -138,7 +101,7 @@ class MainActivity : ComponentActivity() {
 
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             // 위치 정보 권한에 대한 사용자의 응답을 확인
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PERMISSION_GRANTED) {
                 // 위치 정보 권한이 허용된 경우 위치 정보 사용 가능한 상태로 처리
                 // 여기에 위치 정보를 사용하는 기능을 구현하면 됩니다.
             } else {

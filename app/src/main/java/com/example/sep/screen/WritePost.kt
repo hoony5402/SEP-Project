@@ -4,14 +4,12 @@ import android.Manifest
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,25 +17,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -46,10 +37,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -60,7 +47,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -72,14 +58,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -89,7 +73,6 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -98,13 +81,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WritePost(navController: NavHostController) {
 
@@ -117,18 +99,13 @@ fun WritePost(navController: NavHostController) {
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
 
-    val pagerState = rememberPagerState()
-    val coroutineScope = rememberCoroutineScope()
-
     val focusManager = LocalFocusManager.current
 
     val selected = rememberSaveable { mutableStateOf(BottomIcons.HOME) }
 
     var title by rememberSaveable {mutableStateOf("")}
     var description by rememberSaveable {mutableStateOf("")}
-    var time by rememberSaveable {mutableStateOf("")}
     var location by rememberSaveable {mutableStateOf("")}
-    var type by rememberSaveable {mutableStateOf("")}
     var image by rememberSaveable {mutableStateOf<Uri?>(null)}
 
     val launcher =
@@ -178,7 +155,7 @@ fun WritePost(navController: NavHostController) {
 
             year = "$mYear"
 
-            mDate.value = day + "/" + month + "/" + year
+            mDate.value = "$day/$month/$year"
 
         }, mYear, mMonth, mDay
     )
@@ -234,7 +211,7 @@ fun WritePost(navController: NavHostController) {
                 minute = "$mMinute"
             }
 
-            mTime.value = hour + ":" + minute + ampm
+            mTime.value = "$hour:$minute$ampm"
 
         }, mHour, mMinute, false
     )
@@ -278,8 +255,6 @@ fun WritePost(navController: NavHostController) {
                     ){
                         IconButton(
                             onClick = {
-                                Toast.makeText(context, "MENU Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 if(navController.popBackStack().not()) {
                                     navController.navigate(Routes.Homepage.route)
                                 }
@@ -334,8 +309,6 @@ fun WritePost(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.CALENDAR
-                                Toast.makeText(context, "CALENDAR Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Calendar.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -353,8 +326,6 @@ fun WritePost(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.HOME
-                                Toast.makeText(context, "HOME Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Homepage.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -372,8 +343,6 @@ fun WritePost(navController: NavHostController) {
                         IconButton(
                             onClick = {
                                 selected.value = BottomIcons.MAP
-                                Toast.makeText(context, "MAP Clicked", Toast.LENGTH_SHORT)
-                                    .show()
                                 navController.navigate(Routes.Map.route)
                             },
                             modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
@@ -443,7 +412,7 @@ fun WritePost(navController: NavHostController) {
                 // text field
                 TextField(
                     value = selectedItem,
-                    onValueChange = {selectedItem},
+                    onValueChange = {},
                     readOnly = true,
                     label = {
                         Text(
@@ -496,7 +465,6 @@ fun WritePost(navController: NavHostController) {
                                 )},
                             onClick = {
                                 selectedItem = selectedOption
-                                Toast.makeText(contextForToast, selectedOption, Toast.LENGTH_SHORT).show()
                                 expanded = false
                             }
                         )
@@ -611,7 +579,7 @@ fun WritePost(navController: NavHostController) {
                     else
                     {
                         Text(
-                            text = "${mDate.value}",
+                            text = mDate.value,
                             fontSize = (screenHeight/859.0 * 12).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
@@ -644,7 +612,7 @@ fun WritePost(navController: NavHostController) {
                     else
                     {
                         Text(
-                            text = "${mTime.value}",
+                            text = mTime.value,
                             fontSize = (screenHeight/859.0 * 14).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
@@ -662,41 +630,6 @@ fun WritePost(navController: NavHostController) {
                 modifier = Modifier.width((screenWidth / 411.0 * 280).dp)
             )
             {
-                /*
-                TextField(
-                    label = null,
-                    value = location,
-                    onValueChange = { location = it },
-                    placeholder = {
-                        Text(
-                            text = "location",
-                            fontSize = (screenHeight/859.0 * 16).sp,
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                            color = colorResource(R.color.white2)
-                        )
-                    },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = colorResource(R.color.color6),
-                        textColor = colorResource(R.color.white),
-                        cursorColor = colorResource(R.color.white),
-                        focusedIndicatorColor = colorResource(R.color.transparent),
-                        unfocusedIndicatorColor = colorResource(R.color.transparent),
-                        disabledIndicatorColor = colorResource(R.color.transparent)
-                    ),
-                    textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                    modifier = Modifier
-                        .width((screenWidth / 411.0 * 125).dp)
-                        .height((screenHeight / 859.0 * 60).dp),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Next) }
-                    )
-                )
-                 */
                 locationName = MainActivity.locName
                 Button(
                     shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
@@ -723,7 +656,7 @@ fun WritePost(navController: NavHostController) {
                     else
                     {
                         Text(
-                            text = "${locationName}",
+                            text = locationName,
                             fontSize = (screenHeight/859.0 * 14).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),
@@ -769,44 +702,6 @@ fun WritePost(navController: NavHostController) {
                         )
                     }
                 }
-                /*
-
-                TextField(
-                    label = null,
-                    value = image,
-                    onValueChange = { image = it },
-                    placeholder = {
-                        Text(
-                            text = "image",
-                            fontSize = (screenHeight/859.0 * 16).sp,
-                            fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
-                            color = colorResource(R.color.white2)
-                        )
-                    },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = colorResource(R.color.color6),
-                        textColor = colorResource(R.color.white),
-                        cursorColor = colorResource(R.color.white),
-                        focusedIndicatorColor = colorResource(R.color.transparent),
-                        unfocusedIndicatorColor = colorResource(R.color.transparent),
-                        disabledIndicatorColor = colorResource(R.color.transparent)
-                    ),
-                    textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
-                    shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
-                    modifier = Modifier
-                        .width((screenWidth / 411.0 * 125).dp)
-                        .height((screenHeight / 859.0 * 60).dp),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = { focusManager.moveFocus(FocusDirection.Next) }
-                    )
-                )
-
-                 */
-
             }
 
             Spacer(modifier = Modifier.height((screenHeight/859.0 * 70).dp))
@@ -814,12 +709,12 @@ fun WritePost(navController: NavHostController) {
             Button(
                 onClick = {
                     submit_button_Enabled = false
-                    var db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-                    var ref : DatabaseReference = db.getReference("posts").child(selectedItem)
-                    var num :Int = -1
-                    var writer :String = ""
+                    val db : FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+                    val ref : DatabaseReference = db.getReference("posts").child(selectedItem)
+                    var num :Int
+                    var writer = ""
                     if(FirebaseAuth.getInstance().currentUser!=null){
-                        writer = MainActivity.userdata.username.toString()
+                        writer = MainActivity.userdata.username
                     }
                     val format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
                     val current_time = LocalDateTime.now().format(format)
@@ -831,7 +726,7 @@ fun WritePost(navController: NavHostController) {
                                 val storage =
                                     Firebase.storage.getReferenceFromUrl("gs://sep-database-2a67a.appspot.com")
                                 val imageRef = storage.child("images").child(selectedItem)
-                                    .child("image " + num.toString())
+                                    .child("image $num")
                                 image?.let {
                                     imageRef.putFile(it).addOnCompleteListener { task ->
                                         if (task.isSuccessful) {
@@ -840,7 +735,7 @@ fun WritePost(navController: NavHostController) {
                                                 ref.child("number").setValue(num + 1)
                                                 ref.child(num.toString()).child("type")
                                                     .setValue(selectedItem)
-                                                var ref2: DatabaseReference =
+                                                val ref2: DatabaseReference =
                                                     ref.child(num.toString())
                                                 ref2.child("writer").setValue(writer)
                                                 ref2.child("write time")
@@ -851,7 +746,7 @@ fun WritePost(navController: NavHostController) {
                                                 ref2.child("year").setValue(year)
                                                 ref2.child("month").setValue(month)
                                                 ref2.child("day").setValue(day)
-                                                ref2.child("time").setValue(mTime.value.toString())
+                                                ref2.child("time").setValue(mTime.value)
                                                 ref2.child("location").setValue(location)
                                                 ref2.child("locationName").setValue(locationName)
                                                 submit_button_Enabled = true
@@ -882,7 +777,7 @@ fun WritePost(navController: NavHostController) {
                                 ref.child("number").setValue(num + 1)
                                 ref.child(num.toString()).child("type")
                                     .setValue(selectedItem)
-                                var ref2: DatabaseReference =
+                                val ref2: DatabaseReference =
                                     ref.child(num.toString())
                                 ref2.child("writer").setValue(writer)
                                 ref2.child("write time")
@@ -893,7 +788,7 @@ fun WritePost(navController: NavHostController) {
                                 ref2.child("year").setValue(year)
                                 ref2.child("month").setValue(month)
                                 ref2.child("day").setValue(day)
-                                ref2.child("time").setValue(mTime.value.toString())
+                                ref2.child("time").setValue(mTime.value)
                                 ref2.child("location").setValue(location)
                                 ref2.child("locationName").setValue(locationName)
                                 submit_button_Enabled = true

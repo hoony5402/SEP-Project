@@ -1,11 +1,8 @@
 package com.example.sep.screen
 
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
-import android.util.Log
-import android.view.Window
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -39,7 +36,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -63,7 +59,6 @@ import com.example.sep.R
 import com.example.sep.Routes
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -82,7 +77,7 @@ fun LoginPage(navController: NavHostController) {
     val screenHeight = configuration.screenHeightDp
     val screenWidth = configuration.screenWidthDp
 
-    var auth = FirebaseAuth.getInstance()
+    val auth = FirebaseAuth.getInstance()
 
     var user = auth.currentUser
 
@@ -91,14 +86,14 @@ fun LoginPage(navController: NavHostController) {
     val focusManager = LocalFocusManager.current
 
     if(user!=null){
-        login_success(user.email.toString(),context)
+        login_success(user.email.toString())
         Toast.makeText(context,user.email+" login success", Toast.LENGTH_SHORT).show()
         navController.navigate(Routes.Homepage.route)
     }else{
         MainActivity.userdata.reset()
     }
 
-    var (lastemail, lastpassword) = GetLastLoginInfo(context)
+    val (lastemail, lastpassword) = GetLastLoginInfo(context)
     var email by remember { mutableStateOf(lastemail.toString()) }
     var password by remember { mutableStateOf(lastpassword.toString()) }
 
@@ -215,15 +210,15 @@ fun LoginPage(navController: NavHostController) {
             keyboardActions = KeyboardActions(
                 onGo = {
                     focusManager.moveFocus(FocusDirection.Enter)
-                    auth.signInWithEmailAndPassword(email.toString(),password.toString())
+                    auth.signInWithEmailAndPassword(email,password)
                         .addOnCompleteListener{task->
                             if(task.isSuccessful){
                                 Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                                 user = auth.currentUser
-                                login_success(email.toString(),context)
+                                login_success(email)
                                 navController.navigate(Routes.Homepage.route)
                             }else{
-                                Toast.makeText(context,"Login Failed"+email.toString(), Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
@@ -234,12 +229,12 @@ fun LoginPage(navController: NavHostController) {
 
         Button(
             onClick = {
-                auth.signInWithEmailAndPassword(email.toString(),password.toString())
+                auth.signInWithEmailAndPassword(email,password)
                     .addOnCompleteListener{task->
                         if(task.isSuccessful){
                             Toast.makeText(context,"Login Success", Toast.LENGTH_SHORT).show()
                             user = auth.currentUser
-                            login_success(email.toString(),context)
+                            login_success(email)
                             navController.navigate(Routes.Homepage.route)
                         }else{
                             Toast.makeText(context,"Login Failed", Toast.LENGTH_SHORT).show()
@@ -275,9 +270,9 @@ fun LoginPage(navController: NavHostController) {
     }
 }
 
-fun login_success(email:String,cont:Context){
-    var db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
-    var ref = db.reference.child("users")
+fun login_success(email:String){
+    val db :FirebaseDatabase = FirebaseDatabase.getInstance("https://sep-database-2a67a-default-rtdb.asia-southeast1.firebasedatabase.app/")
+    val ref = db.reference.child("users")
     var keyuser = ""
     ref.addListenerForSingleValueEvent(object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -286,7 +281,7 @@ fun login_success(email:String,cont:Context){
                     keyuser = children.key.toString()
                 }
             }
-            ref.child(keyuser.toString()).addListenerForSingleValueEvent(object : ValueEventListener {
+            ref.child(keyuser).addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot2: DataSnapshot) {
                     MainActivity.userdata.set(
                         dataSnapshot2.child("name").getValue().toString(),
@@ -306,26 +301,13 @@ fun login_success(email:String,cont:Context){
 
         }
     })
-/*
-    ref.get().addOnCompleteListener {
-        if(it.isSuccessful){
-            Toast.makeText(cont,"listener2"+keyuser, Toast.LENGTH_SHORT).show()
-            for(children in it.result.children){
-                if(children.child("email").getValue().toString()==email){
-                    keyuser = children.key.toString()
-                }
-            }
-        }
-    }
-    Toast.makeText(cont,"Login WOW"+keyuser, Toast.LENGTH_SHORT).show()
-    */
 }
 
 @SuppressLint("Range")
 fun GetLastLoginInfo(context: Context): Array<Any>{
-    var dbHelper = DBHelper(context, "posts.db", null, 1)
-    var database = dbHelper.writableDatabase
-    var c : Cursor = database.query("lastlogin",null,null,null,null,null,null)
+    val dbHelper = DBHelper(context, "posts.db", null, 1)
+    val database = dbHelper.writableDatabase
+    val c : Cursor = database.query("lastlogin",null,null,null,null,null,null)
     var email = ""
     var password = ""
     while(c.moveToNext()){
