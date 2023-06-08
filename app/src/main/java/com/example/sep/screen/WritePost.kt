@@ -152,7 +152,7 @@ fun WritePost(navController: NavHostController) {
 
     // Fetching current year, month and day
     mYear = mCalendar.get(Calendar.YEAR)
-    mMonth = mCalendar.get(Calendar.MONTH)+1
+    mMonth = mCalendar.get(Calendar.MONTH)
     mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
 
     mCalendar.time = Date()
@@ -749,7 +749,7 @@ fun WritePost(navController: NavHostController) {
                     if (image == null)
                     {
                         Text(
-                            text = "no image",
+                            text = "select image",
                             fontSize = (screenHeight/859.0 * 16).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white2),
@@ -760,7 +760,7 @@ fun WritePost(navController: NavHostController) {
                     else
                     {
                         Text(
-                            text = "image OK",
+                            text = "image selected",
                             fontSize = (screenHeight/859.0 * 14).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white),

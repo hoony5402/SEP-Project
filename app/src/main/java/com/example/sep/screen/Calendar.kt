@@ -277,7 +277,9 @@ fun CalendarPage(navController: NavHostController) {
                         val date = cursor.getString(cursor.getColumnIndex("date"))
                         val time = cursor.getString(cursor.getColumnIndex("time"))
                         val location = cursor.getString(cursor.getColumnIndex("locationName"))
-                        val image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+                        val imageCheck = cursor.getString(cursor.getColumnIndex("image"))
+                        var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
+                        if(imageCheck!="") image=imageCheck
 
                         if (selectDate != date) continue
 
@@ -314,7 +316,7 @@ fun CalendarPage(navController: NavHostController) {
                                     .size((screenWidth / 411.0 * 380).dp, (screenHeight/859.0 * 150).dp)
                             ) {
                                 Text(
-                                    text = title + " " + i.toString(),
+                                    text = title,
                                     textAlign = TextAlign.Left,
                                     fontSize = (screenHeight/859.0 * 20).sp,
                                     fontFamily = FontFamily(Font(R.font.sf_pro_rounded_bold)),

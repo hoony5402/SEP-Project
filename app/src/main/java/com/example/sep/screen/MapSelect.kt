@@ -72,6 +72,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -189,6 +190,68 @@ fun MapSelect(navController: NavHostController) {
 
                 )
             },
+            bottomBar = {
+                BottomAppBar(
+                    containerColor = colorResource(R.color.color1),
+                    contentColor = colorResource(R.color.white2),
+                    modifier = Modifier
+                        .height((screenHeight / 859.0 * 50).dp)
+                        .clip(RoundedCornerShape((screenHeight / 859.0 * 20).dp, (screenHeight / 859.0 * 20).dp, 0.dp, 0.dp)),
+                    content = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    selected.value = BottomIcons.CALENDAR
+                                    navController.navigate(Routes.Calendar.route)
+                                },
+                                modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                            ) {
+                                val delete = painterResource(id = R.drawable.calendar)
+                                Icon(
+                                    painter = delete,
+                                    contentDescription = null,
+                                    modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
+                                    tint = if (selected.value == BottomIcons.CALENDAR) colorResource(R.color.black) else colorResource(R.color.black50)
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    selected.value = BottomIcons.HOME
+                                    navController.navigate(Routes.Homepage.route)
+                                },
+                                modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                            ) {
+                                val delete = painterResource(id = R.drawable.hut)
+                                Icon(
+                                    painter = delete,
+                                    contentDescription = null,
+                                    modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
+                                    tint = if (selected.value == BottomIcons.HOME) colorResource(R.color.black) else colorResource(R.color.black50)
+                                )
+                            }
+                            IconButton(
+                                onClick = {
+                                    selected.value = BottomIcons.MAP
+                                    navController.navigate(Routes.Map.route)
+                                },
+                                modifier = Modifier.size((screenHeight / 859.0 * 30).dp)
+                            ) {
+                                val delete = painterResource(id = R.drawable.place)
+                                Icon(
+                                    painter = delete,
+                                    contentDescription = null,
+                                    modifier = Modifier.size((screenHeight / 859.0 * 100).dp),
+                                    tint = if (selected.value == BottomIcons.MAP) colorResource(R.color.black) else colorResource(R.color.black50)
+                                )
+                            }
+                        }
+                    }
+                )
+            }
         ) { paddingValues ->
 
             Column(
@@ -196,18 +259,23 @@ fun MapSelect(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             )
             {
+                Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
+
+                Text(
+                    text = "tap to select pin location",
+                    fontSize = (screenHeight/859.0 * 20).sp,
+                    color = colorResource(R.color.black),
+                    fontFamily = FontFamily(Font(R.font.sf_pro_text_bold))
+                )
+
+
                 var marker_state by remember {mutableStateOf(MarkerState(position = location!!))}
 
                 GoogleMap(
                     modifier = Modifier
-                        .width(screenWidth.dp)
-                        .height(screenHeight.dp - (screenHeight / 859.0 * 200).dp)
-                        .padding(
-                            (screenHeight / 859.0 * 20).dp,
-                            (screenHeight / 859.0 * 20).dp,
-                            (screenHeight / 859.0 * 20).dp,
-                            (screenHeight / 859.0 * 20).dp
-                        )
+                        .width((screenWidth / 411 * 420).dp)
+                        .height((screenHeight / 859.0 * 500).dp)
+                        .padding((screenHeight / 859.0 * 20).dp, 0.dp, (screenHeight / 859.0 * 20).dp, 0.dp)
                         .clip(RoundedCornerShape((screenHeight / 859.0 * 20).dp)),
                     cameraPositionState = cameraPositionState,
                     onMapClick = { latLng ->
@@ -227,7 +295,7 @@ fun MapSelect(navController: NavHostController) {
                     )
                 }
 
-                //Spacer(modifier = Modifier.height((screenHeight/859.0 * 20).dp))
+                Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
                 TextField(
                     label = null,
@@ -235,7 +303,7 @@ fun MapSelect(navController: NavHostController) {
                     onValueChange = { locationName = it },
                     placeholder = {
                         Text(
-                            text = "location",
+                            text = "enter location name",
                             fontSize = (screenHeight/859.0 * 16).sp,
                             fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)),
                             color = colorResource(R.color.white2)
@@ -252,9 +320,11 @@ fun MapSelect(navController: NavHostController) {
                     textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.sf_pro_text_bold)), fontSize = (screenHeight/859.0 * 18).sp),
                     shape = RoundedCornerShape((screenHeight/859.0 * 20).dp),
                     modifier = Modifier
-                        .width((screenWidth / 411.0 * 125).dp)
+                        .width((screenWidth / 411 * 370).dp)
                         .height((screenHeight / 859.0 * 60).dp),
                 )
+
+                Spacer(modifier = Modifier.height((screenHeight/859.0 * 30).dp))
 
                 Button(
                     onClick = {
@@ -278,10 +348,6 @@ fun MapSelect(navController: NavHostController) {
                     )
                 }
             }
-
-
-
-
         }
     }
 }
