@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -48,11 +50,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavHostController
 import com.example.sep.MainActivity
 import com.example.sep.R
 import com.example.sep.Routes
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.BitmapDescriptor
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -252,15 +257,10 @@ fun MapPage(navController: NavHostController) {
                 ) {
                     Marker(
                         state = MarkerState(position = location),
-                        title = "You",
+                        title = "GIST",
                         snippet = "Marker"
                     )
 
-                    Marker(
-                        state = marker_state,
-                        title = "You",
-                        snippet = "Marker"
-                    )
                     for (i in 0 until MainActivity.shopMark.size){
                         val split = MainActivity.shopMark[i][1].split(",")
                         val mlat = split[0].toDouble()
@@ -269,7 +269,7 @@ fun MapPage(navController: NavHostController) {
                             state = MarkerState(position = LatLng(mlat,mlong)),
                             title = MainActivity.shopMark[i][0],
                             snippet = "Marker",
-                            alpha = 0.7f
+                            alpha = 0.7f,
                         )
                     }
                 }

@@ -64,34 +64,10 @@ import com.example.sep.DBHelper
 fun Image(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
-    val context = LocalContext.current
 
     val screenHeight = configuration.screenHeightDp
-    val screenWidth = configuration.screenWidthDp
 
     val selected = remember { mutableStateOf(BottomIcons.HOME) }
-
-    val i = MainActivity.clickflag
-    val type = MainActivity.clicktype
-
-    val dbHelper: DBHelper = DBHelper(context, "posts.db", null, 1)
-    val database = dbHelper.writableDatabase
-    val cursor = database.rawQuery("SELECT * FROM posts WHERE id = ? AND type = ?", arrayOf(i.toString(), type))
-
-    cursor.moveToNext()
-    val title = cursor.getString(cursor.getColumnIndex("title"))
-    val description = cursor.getString(cursor.getColumnIndex("description"))
-    val date = cursor.getString(cursor.getColumnIndex("date"))
-    val time = cursor.getString(cursor.getColumnIndex("time"))
-    val location = cursor.getString(cursor.getColumnIndex("location"))
-    val locationName = cursor.getString(cursor.getColumnIndex("locationName"))
-    val imageCheck = cursor.getString(cursor.getColumnIndex("image"))
-    var image = "https://logowik.com/content/uploads/images/gist-gwangju-institute-of-science-and-technology9840.jpg"
-    if(imageCheck!="") image=imageCheck
-
-    MainActivity.locName = ""
-    MainActivity.lat = 0.0
-    MainActivity.long = 0.0
 
     Scaffold(
         containerColor = colorResource(R.color.white),
@@ -199,43 +175,6 @@ fun Image(navController: NavHostController) {
             )
         }
     ) { paddingValues ->
-//        Column (
-//            modifier = Modifier.fillMaxWidth(),
-//            verticalArrangement = Arrangement.SpaceEvenly,
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-////            Card(
-////                modifier = Modifier
-////                    .size((screenWidth / 411.0 * 380).dp, (screenHeight / 859.0 * 700).dp)
-////                    .paint(
-////                        painter = rememberAsyncImagePainter(
-////                            model = ImageRequest
-////                                .Builder(LocalContext.current)
-////                                .data(image)
-////                                .scale(Scale.FIT)
-////                                .build()
-////                        ),
-////                        contentScale = ContentScale.Crop
-////                    ),
-////                colors = CardDefaults.cardColors(containerColor = colorResource(R.color.transparent)
-////                )
-////            )
-////            {
-////
-////            }
-//
-//            Image(
-//                painter = rememberAsyncImagePainter(
-//                    model = ImageRequest
-//                        .Builder(LocalContext.current)
-//                        .data(image)
-//                        .scale(Scale.FIT)
-//                        .build()
-//                ),
-//                contentDescription = null
-//            )
-//        }
-
         Box(
             modifier = Modifier.fillMaxSize().padding((screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp, (screenHeight / 859.0 * 10).dp),
             contentAlignment = Alignment.Center
@@ -245,7 +184,7 @@ fun Image(navController: NavHostController) {
                 painter = rememberAsyncImagePainter(
                     model = ImageRequest
                         .Builder(LocalContext.current)
-                        .data(image)
+                        .data(MainActivity.image)
                         .scale(Scale.FIT)
                         .build()
                 ),

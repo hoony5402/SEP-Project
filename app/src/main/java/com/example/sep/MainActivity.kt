@@ -53,6 +53,7 @@ class MainActivity : ComponentActivity() {
         var long: Double = 0.0
         var locName: String = ""
         var shopMark: ArrayList<List<String>> = ArrayList()
+        var image: String = ""
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

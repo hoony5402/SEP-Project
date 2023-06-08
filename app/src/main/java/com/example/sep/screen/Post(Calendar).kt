@@ -296,6 +296,7 @@ fun PostPage_Calendar(navController: NavHostController) {
                     ClickableText(
                         text = AnnotatedString("view image"),
                         onClick = {
+                            MainActivity.image = image
                             navController.navigate(Routes.Image.route)
                         },
                         style = TextStyle(
