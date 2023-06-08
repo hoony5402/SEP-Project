@@ -107,6 +107,7 @@ fun MapPage(navController: NavHostController) {
             } catch (e: Exception) {
                 // 위치 정보를 가져오는 도중 오류 발생
                 Toast.makeText(context, "Failed to get current location", Toast.LENGTH_SHORT).show()
+                location = LatLng(35.2276,126.8394)
             }
         }
     }
@@ -269,7 +270,7 @@ fun MapPage(navController: NavHostController) {
                             state = MarkerState(position = LatLng(mlat,mlong)),
                             title = MainActivity.shopMark[i][0],
                             snippet = "Marker",
-                            alpha = 0.7f,
+                            alpha = 0.7f
                         )
                     }
                 }

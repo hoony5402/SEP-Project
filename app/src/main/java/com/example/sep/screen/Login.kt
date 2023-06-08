@@ -292,7 +292,6 @@ fun login_success(email:String){
                         dataSnapshot2.child("studentid").getValue().toString(),
                         dataSnapshot2.child("password").getValue().toString(),
                         dataSnapshot2.child("usertype").getValue().toString()
-
                     )
                 }
 
@@ -318,7 +317,6 @@ fun get_marker(context:Context){
                 val loc = children.child("location").getValue().toString()
                 MainActivity.shopMark.add(listOf(name,loc))
             }
-            Toast.makeText(context,MainActivity.shopMark.toString(), Toast.LENGTH_SHORT).show()
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
